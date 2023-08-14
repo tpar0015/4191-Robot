@@ -23,4 +23,8 @@ c. Determine launch velocity
 
 ### 4. Fire
 
+Shoot projectile with predetermined parameters
+
 ### 5. Reset
+
+Return to safe state

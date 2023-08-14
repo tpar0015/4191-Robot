@@ -1,6 +1,6 @@
 from gpiozero import Button
 
-button_pin = 2
+button_pin = 2 # change later
 
 
 button = Button(button_pin)
