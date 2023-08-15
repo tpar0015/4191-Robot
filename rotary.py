@@ -14,11 +14,13 @@ def printPosition():
     last_position = position
 
 #! review upon testing
-def stopAfterTicks(ticks, motorlist):
+def stopAfterTicks(ticks, motor1="", motor2=""):
     initialPosition = enc.position
     diff = 0
     while abs(diff) < ticks:
         newPosition = enc.position
         diff = newPosition - initialPosition
-    for motor in motorlist:
-        motor.off()
+    if motor1:
+        motor1.off()
+    if motor2:
+        motor2.off()
