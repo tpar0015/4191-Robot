@@ -1,6 +1,6 @@
 from gpiozero import Button
 
-button_pin = 2 # change later
+button_pin = 2 #? change later
 
 
 button = Button(button_pin)
@@ -13,6 +13,7 @@ def load():
 
     # wait for button to be pressed
     button.wait_for_press()
+    sleep(2)
 
     # return True when loaded
     return True

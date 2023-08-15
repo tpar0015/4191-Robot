@@ -2,6 +2,8 @@ from time import sleep
 from picamera import PiCamera
 import cv2
 
+filename = "foo.jpg"
+
 camera = PiCamera()
 camera.resolution = (2592, 1944) # check version of NoIR camera
 camera.start_preview()
@@ -9,9 +11,8 @@ camera.start_preview()
 sleep(2)
 
 # Capture a photo
-camera.capture('foo.jpg')
+camera.capture(filename)
 
-x_pos, y_pos, x_target, y_target = None, None, None, None
 
 def localise():
     
