@@ -10,7 +10,7 @@ motor_y_pin_FWD, motor_y_pin_REV = 9, 19
 Dir = Enum("Dir", ["FORWARD", "REVERSE"])
 
 # Set parameters
-pwm_freq = 18000  # Hz (20kHz max)
+pwm_freq = 10000  # Hz (20kHz max)
 
 
 # init motor pins
