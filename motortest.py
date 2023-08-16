@@ -1,3 +1,4 @@
+from time import sleep
 from motorctl import motor_x
 
 while True:
