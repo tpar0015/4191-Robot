@@ -1,31 +1,66 @@
-
-import PRi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
-GPIO.setmode(GPIO.BCM)
 
-# Assigning trig_pin and echo_pin to GPIO pins 11 and 12
-TRIG_PIN = 11
-ECHO_PIN = 12
+class Ultrasonic():
+    """
+    Module for ultrasonic sensor
+    """
+    def __init__(self):
+        self.trig_pin = 16
+        self.echo_pin = 18
+        self.time_out =  200 * 2 / 100 / 340 / 1e6# Max Distance*2 / 100 / 340 * 1e6
 
-# Set GPIO distrection
-GPIO.setup(TRIG_PIN, GPIO.OUT) # Set trig as output
-GPIO.setup(ECHO_PIN, GPIO.IN)  # Set echo as input
-GPIO.OUTPUT(TRIG_PIN, GPIO.LOW) # Drive trig to 0V
 
-time.sleep(2)
-GPIO.output(TRIG_PIN, GPIO.HIGH) # Set trig to high
+    def pulse(self, pin, toggle, time_out):
+        """
+        Return the length of the pulse (uS) or 0 if no pulse is returned before
+        the timeout.
+        """
+        t0 = time.time()
+        while (GPIO.input(pin) != toggle):
+            if (time.time() - t0 > self.time_out*1e-6):
+                return 0
+        t0 = time.time()
+        while (GPIO.input(pin) == toggle):
+            if ((time.time() - t0 > self.time_out*1e-6)):
+                return 0
 
-time.sleep(0.00001)
+        pulse_time = (time.time() - t0)*1e6
 
-GPIO.output(TRIG_PIN, GPIO.LOW)
+        return pulse_time
 
-while GPIO.input(ECHO_PIN) == 0:
-    pulse_send = time.time()
-while GPIO.input(ECHO_PIN) == 1:
-    pulse_received = time.time()
 
-pulse_duration = round((pulse_received - pulse_send)/2.2)
-dist = 34000*pulse_duration
+    def get_sonar(self):
+        """
+        Return the measured distance of pulse in cm
+        """
+        GPIO.output(self.trig_pin, GPIO.HIGH)
+        time.sleep(1e-5) # 10us
+        GPIO.output(self.trig_pin, GPIO.LOW)
+        ping_time = self.pulse(self.echo_pin, GPIO.HIGH, self.time_out)
+        distance = ping_time * 340 / 2 / 1e4 # speed of sound 340m/s
+        return distance
 
-# GPIO.cleanup() # resets all ports/pins
 
+    def setup(self):
+
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.trig_pin,GPIO.OUT)
+        GPIO.setup(self.echo_pin,GPIO.IN)
+
+
+    def loop(self):
+        while True:
+            distance = self.get_sonar()
+            print("Distance: %.2f cm"%(distance))
+            time.sleep(1)
+
+
+if __name__ == '__main__':
+    sensor = Ultrasonic()
+    sensor.setup()
+
+    try:
+        sensor.loop()
+    except KeyboardInterrupt:
+        GPIO.cleanup()
