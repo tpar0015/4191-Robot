@@ -1,5 +1,8 @@
 import RPi.GPIO as GPIO
 import time
+#1. send singnal to ultrasonic sensor(trig) and sensor send signal to sense the distance
+#2. wait until sensor recieve the signal to calculate distance
+#3. calculate via formula
 
 class Ultrasonic():
     """
@@ -8,7 +11,7 @@ class Ultrasonic():
     def __init__(self):
         self.trig_pin = 16
         self.echo_pin = 18
-        self.time_out =  200 * 2 / 100 / 340 * 1e6# Max Distance*2 / 100 / 340 * 1e6
+        self.time_out =  200 * 2 / 100 / 340 * 1e6# Max Distance*2 / 100 / 340 * 1e6 (11764.7058824)
 
     def pulse(self, pin, toggle, time_out):
         """
