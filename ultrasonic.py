@@ -8,8 +8,7 @@ class Ultrasonic():
     def __init__(self):
         self.trig_pin = 16
         self.echo_pin = 18
-        self.time_out =  200 * 2 / 100 / 340 / 1e6# Max Distance*2 / 100 / 340 * 1e6
-
+        self.time_out =  200 * 2 / 100 / 340 * 1e6# Max Distance*2 / 100 / 340 * 1e6
 
     def pulse(self, pin, toggle, time_out):
         """
@@ -38,7 +37,8 @@ class Ultrasonic():
         time.sleep(1e-5) # 10us
         GPIO.output(self.trig_pin, GPIO.LOW)
         ping_time = self.pulse(self.echo_pin, GPIO.HIGH, self.time_out)
-        distance = ping_time * 340 / 2 / 1e4 # speed of sound 340m/s
+        print(ping_time)
+        distance = ping_time * 340/ 2 / 1e4 # speed of sound 340m/s
         return distance
 
 
