@@ -3,8 +3,8 @@ from gpiozero import PWMLED
 from time import sleep
 
 
-motor_x_pin_FWD, motor_x_pin_REV = 12, 13     #? change later
-motor_y_pin_FWD, motor_y_pin_REV = 18, 19
+motor_x_pin_FWD, motor_x_pin_REV = 25, 8     #? change later
+motor_y_pin_FWD, motor_y_pin_REV = 7, 1
 
 
 Dir = Enum("Dir", ["FORWARD", "REVERSE"])
