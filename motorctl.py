@@ -1,17 +1,10 @@
-from enum import Enum
 from gpiozero import PWMLED
-from time import sleep
-
 
 motor_x_pin_FWD, motor_x_pin_REV = 25, 8     #? change later
 motor_y_pin_FWD, motor_y_pin_REV = 7, 1
 
-
-Dir = Enum("Dir", ["FORWARD", "REVERSE"])
-
 # Set parameters
 pwm_freq = 10000  # Hz (20kHz max)
-
 
 # init motor pins
 Motor_x_FWD = PWMLED(motor_x_pin_FWD, frequency=pwm_freq)
@@ -19,9 +12,8 @@ Motor_x_REV = PWMLED(motor_x_pin_REV, frequency=pwm_freq)
 Motor_y_FWD = PWMLED(motor_y_pin_FWD, frequency=pwm_freq)
 Motor_y_REV = PWMLED(motor_y_pin_REV, frequency=pwm_freq)
 
-
 def motor_x(speed):
-    # speed is a floating point number between -1 to 1
+    #! speed is a floating point number between -1 to 1
     speed_abs = abs(speed)
     if speed == 0:
         Motor_x_FWD.off()
