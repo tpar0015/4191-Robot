@@ -38,6 +38,17 @@ class Graph:
         self.nodes[node.name] = node
 
 
+    def get_adjacent_nodes(self, xy_position: tuple, radius: float) -> list:
+        """get_adjacent_nodes: returns nodes around a given position within radius."""
+        pass
+
+    def remove_nodes(self, node_list: list) -> None:
+        """remove_nodes: given list of nodes, removes all nodes from graph"""
+        pass
+
+
+
+
     def djikstras(self, start_node, target_node):
         start_node.distance = 0
         heap = [(0, start_node)]

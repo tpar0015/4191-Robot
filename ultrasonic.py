@@ -1,3 +1,9 @@
+"""
+Author: Thomas Pardy
+Date Modified: 2023-08-21
+Ultrasonic sensor modules.
+"""
+
 import RPi.GPIO as GPIO
 import time
 
