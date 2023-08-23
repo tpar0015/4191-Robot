@@ -4,13 +4,13 @@ from time import sleep
 
 
 motor_x_pin_FWD, motor_x_pin_REV = 12, 13     #? change later
-motor_y_pin_FWD, motor_y_pin_REV = 9, 19
+motor_y_pin_FWD, motor_y_pin_REV = 18, 19
 
 
 Dir = Enum("Dir", ["FORWARD", "REVERSE"])
 
 # Set parameters
-pwm_freq = 18000  # Hz (20kHz max)
+pwm_freq = 10000  # Hz (20kHz max)
 
 
 # init motor pins
@@ -23,27 +23,27 @@ Motor_y_REV = PWMLED(motor_y_pin_REV, frequency=pwm_freq)
 def motor_x(speed):
     # speed is a floating point number between -1 to 1
     speed_abs = abs(speed)
-    if speed > 0:
+    if speed == 0:
+        Motor_x_FWD.off()
+        Motor_x_REV.off()
+    elif speed > 0:
         Motor_x_FWD.value = speed_abs
         Motor_x_REV.off()
     elif speed < 0:
         Motor_x_FWD.off()
         Motor_x_REV.value = speed_abs
-    elif speed == 0:
-        Motor_x_FWD.off()
-        Motor_x_REV.off()
 
 def motor_y(speed):
     speed_abs = abs(speed)
-    if speed > 0:
+    if speed == 0:
+        Motor_y_FWD.off()
+        Motor_y_REV.off()
+    elif speed > 0:
         Motor_y_FWD.value = speed_abs
         Motor_y_REV.off()
     elif speed < 0:
         Motor_y_FWD.off()
         Motor_y_REV.value = speed_abs
-    elif speed == 0:
-        Motor_y_FWD.off()
-        Motor_y_REV.off()
 
 
 
