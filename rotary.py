@@ -7,12 +7,13 @@ pin_rotary_b = 2
 
 rotor = RotaryEncoder(pin_rotary_a, pin_rotary_b, max_steps=0)
 
-last_position = None
-def printPosition():
-    position = rotor.steps
-    if last_position == None or position != last_position:
-        print(position)
-    last_position = position
+def printPosition(self):
+    last_position = None
+    while True:
+        position = rotor.steps
+        if last_position == None or position != last_position:
+            print(position)
+        last_position = position
 
 # #! review upon testing
 # def stopAfterTicks(ticks, motor1="", motor2=""):
