@@ -7,7 +7,7 @@ pin_rotary_b = 3
 
 rotor = RotaryEncoder(pin_rotary_a, pin_rotary_b, max_steps=0)
 
-def printPosition(self):
+def printPosition():
     last_position = None
     while True:
         position = rotor.steps
