@@ -11,9 +11,9 @@ def printPosition():
     last_position = None
     while True:
         position = rotor.steps
-        if last_position == None or position != last_position:
-            print(position)
-        last_position = position
+        # if last_position == None or position != last_position:
+        print(position)
+        # last_position = position
 
 # #! review upon testing
 # def stopAfterTicks(ticks, motor1="", motor2=""):
