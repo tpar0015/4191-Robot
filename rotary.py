@@ -15,14 +15,15 @@ def printPosition():
         print(position)
         # last_position = position
 
-# #! review upon testing
-# def stopAfterTicks(ticks, motor1="", motor2=""):
-#     initialPosition = enc.position
-#     diff = 0
-#     while abs(diff) < ticks:
-#         newPosition = enc.position
-#         diff = newPosition - initialPosition
-#     if motor1:
-#         motor1.off()
-#     if motor2:
-#         motor2.off()
+def stopAfterTicks(ticks, motor1="", motor2=""):
+    initialPosition = rotor.steps
+    diff = 0
+    while abs(diff) < ticks:
+        newPosition = rotor.steps
+        diff = newPosition - initialPosition
+    if motor1:
+        print("Stopping motor 1")
+        # motor1.off()
+    if motor2:
+        print("Stopping motor 2")
+        # motor2.off()
