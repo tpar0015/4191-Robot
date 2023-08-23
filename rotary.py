@@ -5,7 +5,7 @@ from gpiozero import RotaryEncoder
 pin_rotary_a = 20    #? change later
 pin_rotary_b = 21
 
-rotor = RotaryEncoder(pin_rotary_a, pin_rotary_b, max_steps=100)
+rotor = RotaryEncoder(pin_rotary_a, pin_rotary_b, max_steps=0)
 
 def printPosition():
     last_position = None
