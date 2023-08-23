@@ -2,8 +2,8 @@
 from gpiozero import RotaryEncoder
 
 
-pin_rotary_a = 2    #? change later
-pin_rotary_b = 3
+pin_rotary_a = 20    #? change later
+pin_rotary_b = 21
 
 rotor = RotaryEncoder(pin_rotary_a, pin_rotary_b, max_steps=100)
 
