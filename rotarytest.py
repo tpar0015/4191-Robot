@@ -1,3 +1,3 @@
-from rotary import printPosition
+import rotary
 
-printPosition()
+rotary.printPosition()
