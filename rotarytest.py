@@ -1,0 +1,3 @@
+import rotary
+
+rotary.printPosition()
