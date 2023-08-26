@@ -1,9 +1,11 @@
 # Call modules for robot
 import time
 from Navigation.graph import Node, Graph
-from ultrasonic import Ultrasonic
+#from ultrasonic import Ultrasonic
 
-
+import multiprocessing
+from multiprocessing import Process, Value, Array
+print("Number of cpu: ", multiprocessing.cpu_count())
 
 
 # Main loop
@@ -19,7 +21,11 @@ if __name__ == "__main__":
 
     args, _ = parser.parse_known_args()
 
-    res = ast.literal_eval(ini_list)
+    #arr1 = Array('i', range(10))
+    #proc1 = Process(target=function, args=(arr1,))
+    #proc1.start()
+    #proc1.join()
+
 
     # Initial positions absolute (in cm (x,y))
     # If no inputs, using sample arena waypoints, change for final pls
@@ -37,13 +43,10 @@ if __name__ == "__main__":
     else:
         robot_pose = ast.literal_eval(args.pose)
 
-    # Initialise variables to start robot
-    complete = False
-    curr_wayp = wayp_0 
-    next_wayp = wayp_1
+    wayp_all = [wayp_0, wayp_1, wayp_2]
 
-    # Move from waypoint 0 to waypoint 1
-    while not complete:
+    # Move to waypoints
+    for curr in range(len(wayp_all)-1):
         """
         Sample robot procedure:
         1. Detect obstacles
@@ -58,8 +61,8 @@ if __name__ == "__main__":
         # Use ultrasonic sensor to update map
 
         ## Path Planning
-        start_node = curr_wayp
-        target_node = next_wayp
+        start_node = wayp_all[curr]
+        target_node = wayp_all[curr+1]
 
         G = Graph()
         G.djikstras(start_node, target_node)
@@ -69,11 +72,14 @@ if __name__ == "__main__":
 
         ## Robot movement
         # Move to target waypoint
+
+        # Wait 10 seconds at/near waypoint to check
+        time.sleep(10)
+
+        
         
 
-
-        if curr_wayp == wayp_2:
-            complete = True
+        
     
 
     
