@@ -1,29 +1,26 @@
 # Provides functions to stop motors depending on rotary encoder output
-from gpiozero import RotaryEncoder
+import rotaryio
 
+pin_rotary_a = 1    #? change later
+pin_rotary_b = 2
 
-pin_rotary_a = 20    #? change later
-pin_rotary_b = 21
+enc = rotaryio.IncrementalEncoder(pin_a=pin_rotary_a, pin_b=pin_rotary_b, divisor=1)
 
-rotor = RotaryEncoder(pin_rotary_a, pin_rotary_b, max_steps=0)
-
+last_position = None
 def printPosition():
-    last_position = None
-    while True:
-        position = rotor.steps
-        # if last_position == None or position != last_position:
+    position = enc.position
+    if last_position == None or position != last_position:
         print(position)
-        # last_position = position
+    last_position = position
 
-# def stopAfterTicks(ticks, motor1="", motor2=""):
-#     initialPosition = rotor.steps
-#     diff = 0
-#     while abs(diff) < ticks:
-#         newPosition = rotor.steps
-#         diff = newPosition - initialPosition
-#     if motor1:
-#         print("Stopping motor 1")
-#         # motor1.off()
-#     if motor2:
-#         print("Stopping motor 2")
-#         # motor2.off()
+#! review upon testing
+def stopAfterTicks(ticks, motor1="", motor2=""):
+    initialPosition = enc.position
+    diff = 0
+    while abs(diff) < ticks:
+        newPosition = enc.position
+        diff = newPosition - initialPosition
+    if motor1:
+        motor1.off()
+    if motor2:
+        motor2.off()
