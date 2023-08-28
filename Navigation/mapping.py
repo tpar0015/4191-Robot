@@ -37,7 +37,7 @@ class Map:
             row = []
             for j in range(col_n):
                 node = Node(f"({i},{j})")
-                node.xy = (i*self.radius + self.radius, j*self.radius + self.radius)
+                node.xy = [i*self.radius + self.radius, j*self.radius + self.radius]
 
                 row.append(node)
 
@@ -124,29 +124,34 @@ class Map:
                 node_colors.append('yellow')
 
             elif self.G[eval(node)].is_obstacle:
+                node_colors.append('green')
+
+            elif node in self.path:
                 node_colors.append('red')
             else:
                 node_colors.append('skyblue')
-        node_sizes = [50 if not node in ["A","B","C","D"] else 10 for node in G_img.nodes]
+        node_sizes = [20 if not node in ["A","B","C","D"] else 10 for node in G_img.nodes]
         node_positions = {node: data["pos"] for node, data in G_img.nodes(data=True)}
 
         if draw_path:
             edge_colors = []
+            edge_width = []
             for edge in G_img.edges:
-                n1 = eval(edge[0])
-                n2 = eval(edge[1])
-                print(n1,n2)
+
                 if edge[0] in ["A", "B", "C", "D"] or edge[1] in ["A", "B", "C", "D"]:
                     edge_colors.append("black")
-                elif self.G[eval(edge[0])] in self.path and self.G[eval(edge[1])] in self.path:
+                    edge_width.append(1)
+                elif edge[0] in self.path and edge[1] in self.path:
                     edge_colors.append("red")
-                    print('path')
+                    edge_width.append(2)
                 else:
                     edge_colors.append("black")
+                    edge_width.append(1)
         else:
             edge_colors = ["black" for _ in G_img.edges]
+            edge_width = [1 for _ in G_img.edges]
 
-        nx.draw(G_img, pos=node_positions, node_size=node_sizes, with_labels=False, node_color=node_colors, edge_color=edge_colors)
+        nx.draw(G_img, pos=node_positions, node_size=node_sizes, with_labels=False, node_color=node_colors, edge_color=edge_colors, width=edge_width)
 
         plt.show()
 
@@ -157,6 +162,4 @@ if __name__ == '__main__':
     end_node = map_test.G.get_nearest_node((100, 950))
     map_test.remap(150, 150)
     map_test.update_path(end_node)
-    print(map_test.path)
-    print("ok")
     map_test.draw_arena(draw_path=True)

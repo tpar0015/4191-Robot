@@ -51,7 +51,8 @@ class Graph:
         x2, y2 = pos2
         return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-    def get_nearest_node(self, pos):
+    def get_nearest_node(self, pos) -> Node:
+        """get_nearest_node: Takes in a (x,y) position, returns nearest node on map"""
         min_dist = float('inf')
         min_node = None
         x1, y1 = pos
@@ -67,7 +68,7 @@ class Graph:
     def adjacent_nodes(self, node, radius) -> list:
         """adjacent_nodes:  returns surrounding nodes within a radius"""
 
-        def recursive_nodes(node, radius, pos, memo) -> Node:
+        def recursive_nodes(node, radius, pos, memo) -> None:
             for neighbour,_ in node.neighbours:
                 memo.append(node)
                 if self.distance(pos, neighbour.xy) < radius and neighbour not in memo:
