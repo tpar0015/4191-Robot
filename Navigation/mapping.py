@@ -90,6 +90,17 @@ class Map:
         self.G.djikstras(start_node, end_node)
         _, self.path = self.G.get_shortest_distance(end_node)
 
+    def get_path_xy(self, end_node) -> list:
+        """
+        Returns path
+        """
+        self.update_path(end_node)
+        path_xy = []
+        for node in self.path:
+            path_xy.append(self.G[eval(node)].xy)
+        return path_xy
+
+
     def draw_arena(self, draw_path=True) -> None:
         """draw_arena: Draws arena as graph"""
         G_img = nx.Graph()
@@ -103,7 +114,7 @@ class Map:
             for edge in node.neighbours:
                 G_img.add_edge(node.name, edge[0].name)
 
-
+    
 
         # Draw boundary
         max_x = self.arena_dimensions[0]

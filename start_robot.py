@@ -1,7 +1,8 @@
 # Call modules for robot
 import time
 from Navigation.graph import Node, Graph
-#from ultrasonic import Ultrasonic
+from Navigation.mapping import Map
+from ultrasonic import Ultrasonic
 
 import multiprocessing
 from multiprocessing import Process, Value, Array
@@ -55,18 +56,27 @@ if __name__ == "__main__":
         """
         ## Initialise map
         ### TODO
+        map = Map((1200,1200), 20, robot_pose)
+        map.generate_map()
 
         ## Detect obstacles to update map
-        ### TODO Add ultrasonic detector 
+        ### TODO Add ultrasonic detector on seperate process
+        # Probs needs to be in seperate function for process
+        ultrasonic = Ultrasonic()
+        ultrasonic.setup()
+        ultrasonic.loop()
+        #p1 = Process(target=map.update_map, args=(ultrasonic,))
+        #p1.start()
         # Use ultrasonic sensor to update map
 
         ## Path Planning
-        start_node = wayp_all[curr]
-        target_node = wayp_all[curr+1]
+        start_xy = wayp_all[curr]
+        start_node = map.G.get_nearest_node(start_xy)
+        target_xy = wayp_all[curr+1]
+        target_node = map.G.get_nearest_node(target_xy)
+        path = map.get_path_xy(target_node)
 
-        G = Graph()
-        G.djikstras(start_node, target_node)
-        path, dist = G.get_shortest_distance(target_node)
+
         #print(path, dist)
 
 
