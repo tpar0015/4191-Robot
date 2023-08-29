@@ -75,6 +75,8 @@ boxes, logits, phrases = predict(
 annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
 cv2.imwrite("annotated_image.jpg", annotated_frame)
 
+def 
+
 '''
 def load_model_hf(repo_id, filename, ckpt_config_filename, device='cpu'):
     cache_config_file = hf_hub_download(repo_id=repo_id, filename=ckpt_config_filename)
