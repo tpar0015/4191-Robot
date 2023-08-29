@@ -1,3 +1,9 @@
+"""
+Author: Thomas Pardy
+Date Modified: 2023-08-21
+Ultrasonic sensor modules.
+"""
+
 import RPi.GPIO as GPIO
 import time
 #1. send singnal to ultrasonic sensor(trig) and sensor send signal to sense the distance
