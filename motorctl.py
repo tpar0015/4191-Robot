@@ -82,11 +82,11 @@ import time
 #Wheel 1(should be left)
 IN_A1=12
 IN_A2=16
-EN_A = 36
+EN_A = 6
 #Wheel 2(should be right)
 IN_B1=18
 IN_B2=22
-EN_B = 38
+EN_B = 27
 
 
 GPIO.setmode(GPIO.BOARD)# can be changed to BCM
