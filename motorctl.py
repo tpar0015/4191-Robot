@@ -142,7 +142,7 @@ class Motor():
         pwm_A.ChangeDutyCycle(speed)
         pwm_B.ChangeDutyCycle(speed)
 
-    def right(self,speed, speed):
+    def right(self,speed):
         
         GPIO.output(IN_A1, GPIO.HIGH)
         GPIO.output(IN_A2, GPIO.LOW)
