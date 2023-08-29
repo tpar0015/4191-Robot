@@ -26,6 +26,7 @@ class Ultrasonic:
             200 * 2 / 100 / 340 * 1e6
         )  # Max Distance*2 / 100 / 340 * 1e6 (11764.7058824)
 
+
     def pulse(self, pin, toggle, time_out):
         """
         Return the length of the pulse (uS) or 0 if no pulse is returned before

@@ -1,3 +1,4 @@
+
 # All is implemented according https://www.pololu.com/product/2997
 import RPi.GPIO as GPIO
 import time
@@ -7,12 +8,12 @@ import time
 # Wheel 1(should be left)
 IN_LF = 12
 IN_LB = 16
-EN_L = 36
+EN_L = 6
 
 # Wheel 2(should be right)
-IN_RF = 24
+IN_RF = 18
 IN_RB = 22
-EN_R = 38
+EN_R = 27
 
 
 GPIO.setmode(GPIO.BOARD)  # can be changed to BCM
@@ -105,3 +106,4 @@ if __name__ == "__main__":
     motor.forward(20, 20)
     time.sleep(5)
     motor.turn_off()
+
