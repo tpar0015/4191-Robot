@@ -70,6 +70,9 @@
 # Motor_R_F.value = 0.5
 
 
+#! This code is implemented with Table 2 'fast decay'
+#! Will need to refactor using Table 1 'slow decay'
+
 
 # All is implemented according https://www.pololu.com/product/2997
 import RPi.GPIO as GPIO
@@ -130,20 +133,20 @@ class Motor():
         pwm_B.ChangeDutyCycle(right_speed)
 
     
-    def left(self,leftspeed, rightspeed):
+    def left(self,speed):
         
         GPIO.output(IN_A1, GPIO.LOW)
         GPIO.output(IN_A2, GPIO.HIGH)
         GPIO.output(IN_B1, GPIO.HIGH)
         GPIO.output(IN_B2, GPIO.LOW)
-        pwm_A.ChangeDutyCycle(leftspeed)
-        pwm_B.ChangeDutyCycle(rightspeed)
+        pwm_A.ChangeDutyCycle(speed)
+        pwm_B.ChangeDutyCycle(speed)
 
-    def right(self,leftspeed, rightspeed):
+    def right(self,speed, speed):
         
         GPIO.output(IN_A1, GPIO.HIGH)
         GPIO.output(IN_A2, GPIO.LOW)
         GPIO.output(IN_B1, GPIO.LOW)
         GPIO.output(IN_B2, GPIO.HIGH)
-        pwm_A.ChangeDutyCycle(leftspeed)
-        pwm_B.ChangeDutyCycle(rightspeed)
+        pwm_A.ChangeDutyCycle(speed)
+        pwm_B.ChangeDutyCycle(speed)

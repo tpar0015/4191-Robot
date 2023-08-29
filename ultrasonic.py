@@ -15,8 +15,8 @@ class Ultrasonic():
     Module for ultrasonic sensor
     """
     def __init__(self):
-        self.trig_pin = 16
-        self.echo_pin = 18
+        self.trig_pin = 17
+        self.echo_pin = 20
         self.time_out =  200 * 2 / 100 / 340 * 1e6# Max Distance*2 / 100 / 340 * 1e6 (11764.7058824)
 
     def pulse(self, pin, toggle, time_out):
