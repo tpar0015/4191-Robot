@@ -16,7 +16,7 @@ IN_RB = 22
 EN_R = 27
 
 
-GPIO.setmode(GPIO.BOARD)  # can be changed to BCM
+GPIO.setmode(GPIO.BCM)  # can be changed to BCM
 
 
 class Motor:
