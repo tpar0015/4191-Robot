@@ -26,7 +26,7 @@ from drive import drive
 
 # Sensors
 from ultrasonic import Ultrasonic
-#from camera import PICam
+from camera import capture
 from detector import detect_obstacle
 
 # Localisation, Path Planning & Navigation
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     ## Define classes
     # LED 
-    led = ledCRL()
+    led = ledCRL() # If not used in ultrasonic already
 
     # Initialise map
     map = Map((1200,1200), 20, robot_pose)
@@ -113,9 +113,13 @@ if __name__ == "__main__":
         ultrasonic_proc = multiprocessing.Process(target=run_ultrasonic, args=())
         ultrasonic_proc.start()
 
-        #p1 = Process(target=map.update_map, args=(ultrasonic,))
-        #p1.start()
-        # Use ultrasonic sensor to update map
+        # TODO Use ultrasonic sensor to update map
+
+        # Take a picture with camera and save it
+        # TODO Potential replace camera taking with real-time
+        camera_proc = multiprocessing.Process(target=capture, args=(1,"data/scene.jpg"))
+        camera_proc.start()
+        camera_proc.join()
         
         ## Path Planning
         start_xy = wayp_all[curr]
@@ -124,7 +128,7 @@ if __name__ == "__main__":
         target_node = map.G.get_nearest_node(target_xy)
         map.update_path(target_node)
         path = map.get_path_xy()
-        #print(path, dist)
+        #shared_array = multiprocessing.Array('i', array_size)
 
 
         ## Robot movement
@@ -134,11 +138,12 @@ if __name__ == "__main__":
         position = [robot_pose[0],robot_pose[1]]
         waypoints = [start_node, target_node]
         drive_proc = multiprocessing.Process(target=drive, args=(waypoints, position, speed, angle))
+        drive_proc.start()
 
+        drive_proc.join() # Wait for drive process to finish
         # Wait 10 seconds at/near waypoint to check
         time.sleep(10)
-
-        drive_proc.join()
+        
 
         
 
