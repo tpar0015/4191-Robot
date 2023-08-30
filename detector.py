@@ -96,13 +96,28 @@ def detect_obstacle(img_name, prompt="obstacle", box_thresh=0.3, text_thresh=0.2
         text_threshold=text_thresh,
         device = device
     )
+    """
+    # Boxes gives the bounding boxes 
+    # Object 1, Object 2, Object 3
+    tensor([[0.1101, 0.1870, 0.2189, 0.2451],
+        [0.5630, 0.4205, 0.2442, 0.2291],
+        [0.5469, 0.2940, 0.1496, 0.0888]])
 
+    # Logits gives the probabilities
+    tensor([0.5044, 0.5221, 0.3507])
+
+    # Phrases gives the text detections from the text prompts
+    """
     annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
+
     # Save annotated image
     cv2.imwrite(f"data/labelled/{img_name}", annotated_frame)
+    return boxes
 
+## TODO Resize image, save bounding boxes to txt file
 
 detect_obstacle("g_bl_ca_2.jpg")
+#detect_obstacle("sample_arena.png", prompt="red sticker", box_thresh=0.4)
 
 ## Function to run on all images
 def detect_all_images(prompt, box_thresh, text_thresh):
@@ -123,6 +138,7 @@ def detect_all_images(prompt, box_thresh, text_thresh):
 
         annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
         cv2.imwrite(f"data/labelled/{img_path_s[5:]}", annotated_frame)
+
 
 
 ### Colour detection
