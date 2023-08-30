@@ -112,9 +112,8 @@ def detect_obstacle(img_name, prompt="obstacle", box_thresh=0.3, text_thresh=0.2
 
     # Save annotated image
     cv2.imwrite(f"data/labelled/{img_name}", annotated_frame)
-    return boxes
+    return boxes, image.shape
 
-## TODO Resize image, save bounding boxes to txt file
 
 detect_obstacle("g_bl_ca_2.jpg")
 #detect_obstacle("sample_arena.png", prompt="red sticker", box_thresh=0.4)
