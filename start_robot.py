@@ -1,12 +1,41 @@
+# ROBOT OPERATION
+"""
+Functions and Files:
+#TODO completed
+led.py - Turns on and off light
+motorCrl_working.py - Working for motorctl.py
+
+#TODO NEEDS TESTING
+detector.py - Detecting bounding boxes from image 
+drive.py - Determine motor inputs given pos and waypoint
+rotary.py - Rotar encoder code
+ultrasonic.py - Runs the ultrasonic module
+
+#TODO IN PROGRESS
+ceiling.py - Ceiling localisation code
+target.py - Sample camera code
+
+
+"""
 # Call modules for robot
 import time
+
+# Driving
+from motorCrl_working import Motor
+from drive import drive
+
+# Sensors
+from ultrasonic import Ultrasonic
+#from camera import PICam
+
+# Localisation, Path Planning & Navigation
 from Navigation.graph import Node, Graph
 from Navigation.mapping import Map
-from ultrasonic import Ultrasonic
+
 
 import multiprocessing
 from multiprocessing import Process, Value, Array
-print("Number of cpu: ", multiprocessing.cpu_count())
+#print("Number of cpu: ", multiprocessing.cpu_count())
 
 
 # Main loop
@@ -26,7 +55,6 @@ if __name__ == "__main__":
     #proc1 = Process(target=function, args=(arr1,))
     #proc1.start()
     #proc1.join()
-
 
     # Initial positions absolute (in cm (x,y))
     # If no inputs, using sample arena waypoints, change for final pls
@@ -68,7 +96,7 @@ if __name__ == "__main__":
         #p1 = Process(target=map.update_map, args=(ultrasonic,))
         #p1.start()
         # Use ultrasonic sensor to update map
-
+        
         ## Path Planning
         start_xy = wayp_all[curr]
         start_node = map.G.get_nearest_node(start_xy)
@@ -76,13 +104,12 @@ if __name__ == "__main__":
         target_node = map.G.get_nearest_node(target_xy)
         map.update_path(target_node)
         path = map.get_path_xy()
-
-
         #print(path, dist)
 
 
         ## Robot movement
         # Move to target waypoint
+
 
         # Wait 10 seconds at/near waypoint to check
         time.sleep(10)
