@@ -31,7 +31,7 @@ class Motor:
         # SECOND ONE
         global pwm_RF
         global pwm_RB
-                
+
         # can set to high initially as others is low
         GPIO.setup(IN_LF, GPIO.OUT, initial=GPIO.HIGH)
         GPIO.setup(IN_LB, GPIO.OUT, initial=GPIO.HIGH)
@@ -99,7 +99,7 @@ class Motor:
     def turn_off(self):
         GPIO.output(EN_R, GPIO.LOW)
         GPIO.output(EN_L, GPIO.LOW)
-
+        GPIO.cleanup()
 
 if __name__ == "__main__":
     motor = Motor()
