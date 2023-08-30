@@ -96,9 +96,10 @@ class Motor:
         pwm_RB.ChangeDutyCycle(speed)
 
     def turn_off(self):
-        GPIO.output(EN_R, GPIO.LOW)
-        GPIO.output(EN_L, GPIO.LOW)
-        GPIO.cleanup()
+        pwm_RF.ChangeDutyCycle(0)
+        pwm_LB.ChangeDutyCycle(0)
+        pwm_RB.ChangeDutyCycle(0)
+        pwm_LF.ChangeDutyCycle(0)
 
 
 if __name__ == "__main__":
@@ -106,3 +107,4 @@ if __name__ == "__main__":
     motor.forward(100, 100)
     time.sleep(5)
     motor.turn_off()
+    GPIO.cleanup()
