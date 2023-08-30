@@ -31,6 +31,9 @@ class Motor:
         # SECOND ONE
         global pwm_RF
         global pwm_RB
+
+        GPIO.cleanup()
+        
         # can set to high initially as others is low
         GPIO.setup(IN_LF, GPIO.OUT, initial=GPIO.HIGH)
         GPIO.setup(IN_LB, GPIO.OUT, initial=GPIO.HIGH)
