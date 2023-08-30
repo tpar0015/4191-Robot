@@ -27,10 +27,10 @@ def drive(waypoints, position, speed, angle):
     # turn to the target angle
     if angle_deviation > 0:
         # turn left to the angle
-        Robot.left(0.6)
+        Robot.spin_left(0.6)
         #? stop turning when angle is reached
         
     else:
         # turn right to the angle
-        Robot.right(0.6)
+        Robot.spin_right(0.6)
         #? stop turning when angle is reached
