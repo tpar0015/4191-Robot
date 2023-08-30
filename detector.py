@@ -1,7 +1,25 @@
 """
 Author: Colin La
-Date modified: 23/8/23
+Date modified: 30/8/23
 Module containing code to interface detector 
+Code used and running from: https://github.com/IDEA-Research/GroundingDINO/tree/60d796825e1266e56f7e4e9e00e88de662b67bd3 
+"""
+
+# Instructions for installing
+"""
+git clone https://github.com/IDEA-Research/GroundingDINO.git
+cd GroundingDINO/
+pip install -e .
+
+mkdir weights
+cd weights
+wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+cd ..
+
+## IF NOT DONE ALREADY
+mkdir data
+# Have all images saved in data folder
+
 """
 
 # Import Libraries
