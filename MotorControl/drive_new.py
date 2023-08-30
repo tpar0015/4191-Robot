@@ -4,17 +4,18 @@ from rotary_new import RotaryEncoder
 from motorctl_new import Motor
 import numpy as np
 import math
+from pins import *
 
 class Drive:
     def __init__(self, pose):
-        self.left_motor = Motor()
-        self.right_motor = Motor()
-        self.left_encoder = RotaryEncoder(20, 21)
-        self.right_encoder = RotaryEncoder(, )
+        self.left_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
+        self.right_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
+        self.left_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
+        self.right_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
 
-        self.turn_radius = 0.1
+        self.turn_radius = 0.121
         self.wheel_radius = 0.05
-        self.distance_per_tick = 2 * np.pi * self.wheel_radius / 20
+        self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in metres
 
         self.speed = 100
         self.pose = pose
@@ -144,7 +145,15 @@ class Drive:
         self.turn(theta)
         distance = math.sqrt(dx**2 + dy**2)
         self.drive_forward(distance)
-        if theta_end:
+        if theta_end is not None:
             # Difference in angle between current and desired
             theta_diff = theta_end - self.pose[2]
             self.turn(theta_diff)
+
+    def get_pose(self):
+        return self.pose
+
+if __name__== "__main__":
+    robot_control = Drive([0,0,0])
+    robot_control.drive_to_point(100,100, None)
+    print(robot_control.get_pose())

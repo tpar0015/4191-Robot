@@ -7,6 +7,7 @@ Ultrasonic sensor modules.
 import RPi.GPIO as GPIO
 import time
 from led import ledCRL
+from pins import *
 
 # 1. send singnal to ultrasonic sensor(trig) and sensor send signal to sense the distance
 # 2. wait until sensor recieve the signal to calculate distance
@@ -19,8 +20,8 @@ class Ultrasonic:
     """
 
     def __init__(self):
-        self.trig_pin = 16
-        self.echo_pin = 18
+        self.trig_pin = PINS["sonar_trig"]
+        self.echo_pin = PINS["sonar_echo"]
         self.led = ledCRL()
         self.time_out = (
             200 * 2 / 100 / 340 * 1e6
