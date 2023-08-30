@@ -131,12 +131,16 @@ def detect_all_images(prompt, box_thresh, text_thresh):
 filename = "foo.jpg" 
 image=cv2.imread(filename)
 image=imutils.resize(image,width=530,height=350)
-
+'''
 # Functions
-def get_colour(image, x=0, y=0):
+def get_colour(filename, x=0, y=0):
     """
     Returns red, green, or blue based on single pixel coordinate value
     """
+    image=cv2.imread(filename)
+    # Resize image for easier use
+    image=imutils.resize(image,width=530,height=350) 
+
     height, width, _ = image.shape
     if x == 0 or y == 0:
         x = int(width / 2)
@@ -155,6 +159,3 @@ def get_colour(image, x=0, y=0):
         
     return colour
 
-
-get_colour(image)
-'''
