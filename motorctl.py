@@ -6,16 +6,16 @@ import time
 
 # Wheel 1(should be left)
 IN_LF = 12
-IN_LB = 16
-EN_L = 6
+IN_LB = 15
+EN_L = 13
 
 # Wheel 2(should be right)
-IN_RF = 18
-IN_RB = 22
-EN_R = 27
+IN_RF = 32
+IN_RB = 36
+EN_R = 31
 
 
-GPIO.setmode(GPIO.BCM)  # can be changed to BCM
+GPIO.setmode(GPIO.BOARD)  # can be changed to BCM
 
 
 class Motor:
@@ -31,7 +31,6 @@ class Motor:
         # SECOND ONE
         global pwm_RF
         global pwm_RB
-
         # can set to high initially as others is low
         GPIO.setup(IN_LF, GPIO.OUT, initial=GPIO.HIGH)
         GPIO.setup(IN_LB, GPIO.OUT, initial=GPIO.HIGH)
@@ -97,13 +96,15 @@ class Motor:
         pwm_RB.ChangeDutyCycle(speed)
 
     def turn_off(self):
-        GPIO.output(EN_R, GPIO.LOW)
-        GPIO.output(EN_L, GPIO.LOW)
-        GPIO.cleanup()
+        pwm_RF.ChangeDutyCycle(0)
+        pwm_LB.ChangeDutyCycle(0)
+        pwm_RB.ChangeDutyCycle(0)
+        pwm_LF.ChangeDutyCycle(0)
+
 
 if __name__ == "__main__":
     motor = Motor()
-
-    motor.forward(20, 20)
-    time.sleep(5)
+    motor.forward(100, 100)
+    time.sleep(2)
     motor.turn_off()
+    GPIO.cleanup()
