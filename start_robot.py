@@ -74,7 +74,8 @@ if __name__ == "__main__":
         start_node = map.G.get_nearest_node(start_xy)
         target_xy = wayp_all[curr+1]
         target_node = map.G.get_nearest_node(target_xy)
-        path = map.get_path_xy(target_node)
+        map.update_path(target_node)
+        path = map.get_path_xy()
 
 
         #print(path, dist)

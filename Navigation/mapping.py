@@ -8,7 +8,7 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from graph import Graph, Node
-
+from math import comb
 # Recieve position from rotary encoders
 # Recieve readouts from ultrasonic sensor
 
@@ -90,17 +90,33 @@ class Map:
         self.G.djikstras(start_node, end_node)
         _, self.path = self.G.get_shortest_distance(end_node)
 
-    def get_path_xy(self, end_node) -> list:
+    def get_path_xy(self) -> list:
         """
         Returns path
         """
-        self.update_path(end_node)
         path_xy = []
         for node in self.path:
             path_xy.append(self.G[eval(node)].xy)
         return path_xy
 
+    def bezier_curve(self, t):
+        """
+        Returns bezier curve of path
+        """
+        path_xy = self.get_path_xy()
+        n = len(path_xy)
+        # Basis
+        basis_vals = []
+        for i in range(n):
+            basis_vals.append(comb(n-1,i) * ((1-t)**(n-1-i) * (t**i)))
+        
+        x = 0
+        y = 0
+        for i in range(n):
+            x += basis_vals[i] * path_xy[i][0]
+            y += basis_vals[i] * path_xy[i][1]
 
+        return (x,y)
     def draw_arena(self, draw_path=True) -> None:
         """draw_arena: Draws arena as graph"""
         G_img = nx.Graph()
@@ -109,13 +125,29 @@ class Map:
             node = self.G[eval(node_name)]
             G_img.add_node(node.name, pos=node.xy)
 
-        for node_name in self.G.nodes:
-            node = self.G[eval(node_name)]
-            for edge in node.neighbours:
-                G_img.add_edge(node.name, edge[0].name)
+        # for node_name in self.G.nodes:
+        #     node = self.G[eval(node_name)]
+        #     for edge in node.neighbours:
+        #         G_img.add_edge(node.name, edge[0].name)
 
     
 
+        # Draw Bezier
+        t = np.linspace(0, 1, 100)
+        x_vals = []
+        y_vals = []
+        for i in t:
+            x, y = self.bezier_curve(i)
+            x_vals.append(x)
+            y_vals.append(y)
+        # Add node
+        # bezier_nodes = []
+        # for i in range(len(x)):
+        #     G_img.add_node(f"({x[i]},{y[i]})", pos=(x[i], y[i])
+        #     bezier_nodes.append(f"({x[i]},{y[i]})")
+        # for i in range(len(x)-1):
+        #     G_img.add_edge(f"({x[i]},{y[i]})", f"({x[i+1]},{y[i+1]})")
+        plt.plot(x_vals, y_vals, 'r--')
         # Draw boundary
         max_x = self.arena_dimensions[0]
         max_y = self.arena_dimensions[1]
@@ -154,13 +186,16 @@ class Map:
                     edge_width.append(1)
                 elif edge[0] in self.path and edge[1] in self.path:
                     edge_colors.append("red")
-                    edge_width.append(2)
+                    edge_width.append(1)
+
+
                 else:
                     edge_colors.append("black")
                     edge_width.append(1)
         else:
             edge_colors = ["black" for _ in G_img.edges]
             edge_width = [1 for _ in G_img.edges]
+
 
         nx.draw(G_img, pos=node_positions, node_size=node_sizes, with_labels=False, node_color=node_colors, edge_color=edge_colors, width=edge_width)
 

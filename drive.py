@@ -17,12 +17,7 @@ def drive(waypoints, position, speed, angle):
     # angle = arctan(diff_y/diff_x) adjusted for Q2, Q3 of unit circle
     diff_y = waypoints[0][1] - position[1]
     diff_x = waypoints[0][0] - position[0]
-    target_angle = np.arctan(diff_y/diff_x)
-    if diff_x < 0:
-        if diff_y < 0:
-            target_angle -= 2*np.pi
-        else:
-            target_angle += 2*np.pi
+    target_angle = np.arctan2(diff_y, diff_x)
 
     angle_deviation = target_angle - angle
 
