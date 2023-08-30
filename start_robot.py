@@ -46,9 +46,6 @@ import ast
 
 ################################################################
 # Functions for multiprocessing
-#def drive_to_waypoint():
-
-
 # Ultrasonic
 def run_ultrasonic():
     ultrasonic = Ultrasonic()
@@ -100,6 +97,9 @@ if __name__ == "__main__":
     # Initialise map
     map = Map((1200,1200), 20, robot_pose)
     map.generate_map()
+
+    # Initialise robot
+    Robot = Motor()
     
     # Move to waypoints
     for curr in range(len(wayp_all)-1):
@@ -110,8 +110,8 @@ if __name__ == "__main__":
         3. Robot movement
         """
         ## Detect obstacles to update map
-        multiprocessing.Process(target=run_ultrasonic, args=())
-
+        ultrasonic_proc = multiprocessing.Process(target=run_ultrasonic, args=())
+        ultrasonic_proc.start()
 
         #p1 = Process(target=map.update_map, args=(ultrasonic,))
         #p1.start()
@@ -129,10 +129,18 @@ if __name__ == "__main__":
 
         ## Robot movement
         # Move to target waypoint
-
+        speed = 1
+        angle = robot_pose[2]
+        position = [robot_pose[0],robot_pose[1]]
+        waypoints = [start_node, target_node]
+        drive_proc = multiprocessing.Process(target=drive, args=(waypoints, position, speed, angle))
 
         # Wait 10 seconds at/near waypoint to check
         time.sleep(10)
+
+        drive_proc.join()
+
+        
 
         
         
