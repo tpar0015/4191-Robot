@@ -1,8 +1,11 @@
-import rotary
+# import rotary
+import RPi.GPIO as GPIO
 import motorctl
 
 Robot = motorctl.Motor()
 
-while True:
-    # rotary.printPosition()
+if __name__ == 'main':    # rotary.printPosition()
     Robot.forward(100,100)
+    sleep(5)
+    GPIO.cleanup()
+
