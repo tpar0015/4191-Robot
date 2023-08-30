@@ -4,6 +4,6 @@ import motorctl
 Robot = motorctl.Motor()
 
 
-rotary.printPosition()
+# rotary.printPosition()
 
 Robot.forward(1,1)
