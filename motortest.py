@@ -3,7 +3,6 @@ import motorctl
 
 Robot = motorctl.Motor()
 
-
-# rotary.printPosition()
 while True:
+    # rotary.printPosition()
     Robot.forward(1,1)
