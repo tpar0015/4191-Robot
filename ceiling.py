@@ -8,8 +8,11 @@ def ceiling_base_localization(image_1, image_2, camera_matrix):
     img1 = cv2.cvtColor(cv2.imread(image_1), cv2.COLOR_BGR2GRAY)    
     img2 = cv2.cvtColor(cv2.imread(image_2), cv2.COLOR_BGR2GRAY)    
 
+    # img1 = cv2.blur(img1,(10,10))
+    # img2 = cv2.blur(img2,(10,10))
+
     # Initiate ORB detector
-    orb = cv2.ORB_create()
+    orb = cv2.ORB_create()    # (patchSize=50)
 
     # Find the keypoints and descriptors
     kp1, des1 = orb.detectAndCompute(img1,None)
@@ -26,7 +29,7 @@ def ceiling_base_localization(image_1, image_2, camera_matrix):
     X1 = np.vstack([kp1[match.queryIdx].pt for match in matches])
     X2 = np.vstack([kp2[match.trainIdx].pt for match in matches])
 
-    # Estimate homograpahy using opencv - 
+    # Estimate homography using opencv - 
     H, mask = cv2.findHomography(X1, X2, cv2.RANSAC, 1.0)
 
     translation_matrix = np.matmul(np.linalg.inv(camera_matrix), H)

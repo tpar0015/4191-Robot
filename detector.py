@@ -1,7 +1,25 @@
 """
 Author: Colin La
-Date modified: 23/8/23
+Date modified: 30/8/23
 Module containing code to interface detector 
+Code used and running from: https://github.com/IDEA-Research/GroundingDINO/tree/60d796825e1266e56f7e4e9e00e88de662b67bd3 
+"""
+
+# Instructions for installing
+"""
+git clone https://github.com/IDEA-Research/GroundingDINO.git
+cd GroundingDINO/
+pip install -e .
+
+mkdir weights
+cd weights
+wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+cd ..
+
+## IF NOT DONE ALREADY
+mkdir data
+# Have all images saved in data folder
+
 """
 
 # Import Libraries
@@ -38,182 +56,91 @@ import torch
 from io import BytesIO
 from huggingface_hub import hf_hub_download
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(device)
-from GroundingDINO.groundingdino.util.inference import load_image, predict, annotate, load_model
+from GroundingDINO.groundingdino.util.inference import load_image, predict, annotate#, load_model
+import glob
 
 
-def load_model(model_config_path, model_checkpoint_path, cpu_only=False):
-    args = SLConfig.fromfile(model_config_path)
-    args.device = "cuda" if not cpu_only else "cpu"
-    model = build_model(args)
-    checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
-    load_res = model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
-    print(load_res)
-    _ = model.eval()
-    return model
+def detect_obstacle(img_name, prompt="obstacle", box_thresh=0.3, text_thresh=0.25):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    def load_model(model_config_path, model_checkpoint_path, cpu_only=False):
+        args = SLConfig.fromfile(model_config_path)
+        args.device = "cuda" if not cpu_only else "cpu"
+        model = build_model(args)
+        checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
+        load_res = model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
+        print(load_res)
+        _ = model.eval()
+        return model
 
+    model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "GroundingDINO/weights/groundingdino_swint_ogc.pth",cpu_only=True)
+    #model = model.to(device)
 
-model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "GroundingDINO/weights/groundingdino_swint_ogc.pth",cpu_only=True)
-model = model.to("cpu")
-IMAGE_PATH = "data/g_bl_ca_2.jpg"
-TEXT_PROMPT = "obstacles . block"
-BOX_TRESHOLD = 0.35
-TEXT_TRESHOLD = 0.25
+    # Set image name
+    #img_name = "g_bl_ca_2.jpg"
+    img_path = f"data/{img_name}"
 
-image_source, image = load_image(IMAGE_PATH)
+    # Add prompt and thresholds
+    #prompt = "obstacle"
+    #box_thresh = 0.35
+    #text_thresh = 0.25
 
-boxes, logits, phrases = predict(
-    model=model,
-    image=image,
-    caption=TEXT_PROMPT,
-    box_threshold=BOX_TRESHOLD,
-    text_threshold=TEXT_TRESHOLD,
-    device = "cpu"
-)
+    # Load image
+    image_source, image = load_image(img_path)
 
-annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
-cv2.imwrite("annotated_image.jpg", annotated_frame)
-
-def 
-
-'''
-def load_model_hf(repo_id, filename, ckpt_config_filename, device='cpu'):
-    cache_config_file = hf_hub_download(repo_id=repo_id, filename=ckpt_config_filename)
-
-    args = SLConfig.fromfile(cache_config_file)
-    args.device = device
-    model = build_model(args)
-
-    cache_file = hf_hub_download(repo_id=repo_id, filename=filename)
-    checkpoint = torch.load(cache_file, map_location=device)
-    log = model.load_state_dict(clean_state_dict(checkpoint['model']), strict=False)
-    #log = model.(clean_state_dict(checkpoint['model']), strict=False)
-    print("Model loaded from {} \n => {}".format(cache_file, log))
-    _ = model.eval()
-    return model
-ckpt_repo_id = "ShilongLiu/GroundingDINO"
-ckpt_filenmae = "groundingdino_swinb_cogcoor.pth"
-ckpt_config_filename = "GroundingDINO_SwinB.cfg.py"
-
-groundingdino_model = load_model_hf(ckpt_repo_id, ckpt_filenmae, ckpt_config_filename, device="cpu")
-
-# detect object using grounding DINO
-def detect(image, text_prompt, model, box_threshold = 0.3, text_threshold = 0.25, device="cpu"):
-  boxes, logits, phrases = predict(
-      model=model,
-      image=image,
-      caption=text_prompt,
-      box_threshold=box_threshold,
-      text_threshold=text_threshold,
-      device=device
-  )
-
-  annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
-  annotated_frame = annotated_frame[...,::-1] # BGR to RGB
-  return annotated_frame, boxes
-
-
-def load_image(image_path: str):
-    transform = T.Compose(
-        [
-            #T.RandomResize([800], max_size=1333),
-            T.ResizeDebug((504, 378)),
-            T.ToTensor(),
-            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ]
+    # Run model
+    boxes, logits, phrases = predict(
+        model=model,
+        image=image,
+        caption=prompt,
+        box_threshold=box_thresh,
+        text_threshold=text_thresh,
+        device = device
     )
-    image_source = Image.open(image_path).convert("RGB")
-    image = np.asarray(image_source)
-    image_transformed, _ = transform(image_source, None)
-    return image, image_transformed
 
-def get_bbox(img_path):
-    _, image = load_image(img_path)
-
-    annotated_frame, detected_boxes = detect(image, text_prompt="green", model=groundingdino_model, device=device)
-    return annotated_frame, detected_boxes
+    annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
+    # Save annotated image
+    cv2.imwrite(f"data/labelled/{img_name}", annotated_frame)
 
 
+detect_obstacle("g_bl_ca_2.jpg")
+
+## Function to run on all images
+def detect_all_images(prompt, box_thresh, text_thresh):
+    "Gives bounding boxes for all objects in an image following file path data/{imgs}.jpg"
+    for img_path_s in glob.glob("data/*.jpg"):
+        img_path = img_path_s.replace(os.sep, '/')
+        image_source, image = load_image(img_path)
+
+        boxes, logits, phrases = predict(
+            model=model,
+            image=image,
+            caption=prompt,
+            box_threshold=box_thresh,
+            text_threshold=text_thresh,
+            device = device
+        )
 
 
-##############################################################################
-# Basic set up for transforming coordinates 
-bounding_box = 1
-image_coords = bounding_box
-camera_to_image = 1 # Transformation matrix for camera to iamge
-cam_coords = image_coords / camera_to_image
-world_to_camera = 1# Transformation matrix for world to camera
-world_coords = cam_coords / world_to_camera
+        annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
+        cv2.imwrite(f"data/labelled/{img_path_s[5:]}", annotated_frame)
 
 
-
-
-# Bounding boxes as [x_centre,y_centre,width,height] 
-# Module to use camera matrix to estimate poses 
-def estimate_pose():
-    camera_matrix = camera_matrix
-    focal_length = camera_matrix[0][0]
-    target_dimensions = []
-
-    # Measure obstacles 
-    obstacle_dimensions = [0.075448, 0.074871, 0.071889]
-
-    target_dimensions.append(obstacle_dimensions)
-
-    target_pose_dict = {}
-    for waypoint in way_points.keys():
-            
-        robot_pose = current_robot_pose # completed_img_dict[target_num]['robot'] 
-
-        for i in range(len(way_points[waypoint]['target'])):
-            box = bounding_box
-            true_height = target_dimensions[waypoint-1][2]
-            im_x=640
-
-            dist=focal_length*true_height/box[3]
-            y_cam=-(box[0]-im_x/2)*dist/focal_length
-            x_cam=dist
-            th=robot_pose[2]
-            rob_y=robot_pose[1]
-            rob_x=robot_pose[0]
-            x_world=x_cam*np.cos(th)-y_cam*np.sin(th)
-            y_world=x_cam*np.sin(th)+y_cam*np.cos(th)
-            x_world=rob_x+x_world
-            y_world=rob_y+y_world
-
-            target_pose={'y': (y_world).item(), 'x': (x_world).item()}
-
-    return target_pose
-
-
-
-# Detector Class
-
-class Detector: 
-    def __init__(self, ckpt, gpu_use=False):
-        self.model = 
-        if torch.cuda.torch.cuda.device_count() > 0 and use_gpu:
-            self.use_gpu = True
-            self.model = self.model.cuda()
-        else:
-            self.use_gpu = False
-        self.load_weights(ckpt)
-
-
-
-
-
+### Colour detection
+'''
 # Load image 
 filename = "foo.jpg" 
 image=cv2.imread(filename)
 image=imutils.resize(image,width=530,height=350)
-
+'''
 # Functions
-def get_colour(image, x=0, y=0):
+def get_colour(filename, x=0, y=0):
     """
     Returns red, green, or blue based on single pixel coordinate value
     """
+    image=cv2.imread(filename)
+    # Resize image for easier use
+    image=imutils.resize(image,width=530,height=350) 
+
     height, width, _ = image.shape
     if x == 0 or y == 0:
         x = int(width / 2)
@@ -231,7 +158,3 @@ def get_colour(image, x=0, y=0):
         colour = "red"
         
     return colour
-
-
-get_colour(image)
-'''
