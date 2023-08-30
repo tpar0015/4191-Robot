@@ -125,10 +125,10 @@ class Map:
             node = self.G[eval(node_name)]
             G_img.add_node(node.name, pos=node.xy)
 
-        # for node_name in self.G.nodes:
-        #     node = self.G[eval(node_name)]
-        #     for edge in node.neighbours:
-        #         G_img.add_edge(node.name, edge[0].name)
+        for node_name in self.G.nodes:
+            node = self.G[eval(node_name)]
+            for edge in node.neighbours:
+                G_img.add_edge(node.name, edge[0].name)
 
     
 
@@ -140,13 +140,7 @@ class Map:
             x, y = self.bezier_curve(i)
             x_vals.append(x)
             y_vals.append(y)
-        # Add node
-        # bezier_nodes = []
-        # for i in range(len(x)):
-        #     G_img.add_node(f"({x[i]},{y[i]})", pos=(x[i], y[i])
-        #     bezier_nodes.append(f"({x[i]},{y[i]})")
-        # for i in range(len(x)-1):
-        #     G_img.add_edge(f"({x[i]},{y[i]})", f"({x[i+1]},{y[i+1]})")
+
         plt.plot(x_vals, y_vals, 'r--')
         # Draw boundary
         max_x = self.arena_dimensions[0]
@@ -203,9 +197,9 @@ class Map:
 
 
 if __name__ == '__main__':
-    map_test = Map((1000, 1000), 50, loc=(500,500,np.pi/6))
+    map_test = Map((1000, 1000), 50, loc=(500,0,np.pi/6))
     map_test.generate_map()
-    end_node = map_test.G.get_nearest_node((100, 950))
+    end_node = map_test.G.get_nearest_node((900, 950))
     map_test.remap(150, 150)
     map_test.update_path(end_node)
     map_test.draw_arena(draw_path=True)

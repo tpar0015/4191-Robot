@@ -1,4 +1,4 @@
-import rotary
+import MotorControl.rotary as rotary
 import motorctl
 
 Robot = motorctl.Motor()
