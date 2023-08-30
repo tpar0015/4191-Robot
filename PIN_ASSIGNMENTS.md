@@ -1,16 +1,16 @@
 # Pin assignments
 
 ## Motors
+BCM -- BOARD pin numbers
+### Right motor
+Fwd: 12 -- 32
+Rev: 16 -- 36
+EN: 6 -- 31
 
 ### Left motor
-Fwd: 12
-Rev: 16
-EN: 6
-
-### Right motor
-Fwd: 18
-Rev: 22
-EN: 27
+Fwd: 18 -- 12
+Rev: 22 -- 15
+EN: 27 -- 13
 
 ## Ultrasonic
 Trig pin: 17
