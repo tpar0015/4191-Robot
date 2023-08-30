@@ -5,5 +5,5 @@ Robot = motorctl.Motor()
 
 
 # rotary.printPosition()
-
-Robot.forward(1,1)
+while True:
+    Robot.forward(1,1)
