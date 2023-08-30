@@ -6,8 +6,15 @@ import time
 
 # Wheel 1(should be left)
 IN_LF = 12
-IN_LB = 15
-EN_L = 13
+
+IN_LB = 16
+EN_L = 6
+
+# Wheel 2(should be right)
+IN_RF = 18
+IN_RB = 22
+EN_R = 27
+
 
 # Wheel 2(should be right)
 IN_RF = 32
@@ -98,11 +105,11 @@ class Motor:
     def turn_off(self):
         GPIO.output(EN_R, GPIO.LOW)
         GPIO.output(EN_L, GPIO.LOW)
-        GPIO.cleanup()
 
 
 if __name__ == "__main__":
     motor = Motor()
-    motor.forward(100, 100)
+
+    motor.forward(20, 20)
     time.sleep(5)
     motor.turn_off()
