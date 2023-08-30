@@ -158,4 +158,3 @@ def get_colour(filename, x=0, y=0):
         colour = "red"
         
     return colour
-
