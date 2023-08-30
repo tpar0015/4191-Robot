@@ -105,6 +105,6 @@ class Motor:
 if __name__ == "__main__":
     motor = Motor()
     motor.forward(100, 100)
-    time.sleep(5)
+    time.sleep(2)
     motor.turn_off()
     GPIO.cleanup()
