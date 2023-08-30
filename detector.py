@@ -1,7 +1,25 @@
 """
 Author: Colin La
-Date modified: 23/8/23
+Date modified: 30/8/23
 Module containing code to interface detector 
+Code used and running from: https://github.com/IDEA-Research/GroundingDINO/tree/60d796825e1266e56f7e4e9e00e88de662b67bd3 
+"""
+
+# Instructions for installing
+"""
+git clone https://github.com/IDEA-Research/GroundingDINO.git
+cd GroundingDINO/
+pip install -e .
+
+mkdir weights
+cd weights
+wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+cd ..
+
+## IF NOT DONE ALREADY
+mkdir data
+# Have all images saved in data folder
+
 """
 
 # Import Libraries
@@ -113,12 +131,16 @@ def detect_all_images(prompt, box_thresh, text_thresh):
 filename = "foo.jpg" 
 image=cv2.imread(filename)
 image=imutils.resize(image,width=530,height=350)
-
+'''
 # Functions
-def get_colour(image, x=0, y=0):
+def get_colour(filename, x=0, y=0):
     """
     Returns red, green, or blue based on single pixel coordinate value
     """
+    image=cv2.imread(filename)
+    # Resize image for easier use
+    image=imutils.resize(image,width=530,height=350) 
+
     height, width, _ = image.shape
     if x == 0 or y == 0:
         x = int(width / 2)
@@ -136,7 +158,3 @@ def get_colour(image, x=0, y=0):
         colour = "red"
         
     return colour
-
-
-get_colour(image)
-'''
