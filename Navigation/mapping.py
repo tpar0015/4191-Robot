@@ -60,14 +60,14 @@ class Map:
             for j in i:
                 self.G.add_node(j)
 
-    def update_location(self, encoder_readout):
+    def update_location(self, encoder_readout) -> None:
         """
         Updates predicted location on nodal map
         """
         self.location = encoder_readout
 
 
-    def remap(self, ultrasonic_readout, object_size):
+    def remap(self, ultrasonic_readout, object_size) -> None:
         """
         Re calibrates map with object blocked out on nodes.
         """
@@ -82,7 +82,7 @@ class Map:
         for node in obstacle_nodes:
             self.G.set_obstacle(node)
 
-    def update_path(self, end_node):
+    def update_path(self, end_node) -> None:
         """
         Updates path to avoid any new obstacles
         """
