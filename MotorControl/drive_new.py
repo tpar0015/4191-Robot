@@ -154,6 +154,7 @@ class Drive:
         return self.pose
 
 if __name__== "__main__":
+    GPIO.cleanup
     robot_control = Drive([0,0,0])
     robot_control.drive_to_point(100,100, None)
     print(robot_control.get_pose())
