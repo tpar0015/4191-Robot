@@ -1,6 +1,9 @@
+import sys
 import time
 import RPi.GPIO as GPIO
-
+sys.path.append("/home/tom/4191-Robot/")
+from pins import *
+from rotary_new import RotaryEncoder
 
 class Motor():
     """Module for controlling a single motor"""
@@ -38,3 +41,11 @@ class Motor():
         """Sets motor speed"""
         self.speed = speed
         self.pwm.ChangeDutyCycle(speed)
+
+if __name__=="__main__":
+    right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
+    left_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
+    left_motor.forward()
+    time.sleep(5)
+    left_motor.stop()
+    GPIO.cleanup()

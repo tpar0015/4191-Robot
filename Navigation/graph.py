@@ -51,7 +51,7 @@ class Graph:
         x2, y2 = pos2
         return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-    def get_nearest_node(self, pos) -> Node:
+    def get_nearest_node(self, pos):
         """get_nearest_node: Takes in a (x,y) position, returns nearest node on map"""
         min_dist = float('inf')
         min_node = None
@@ -89,18 +89,9 @@ class Graph:
 
     
 
-    def get_adjacent_nodes(self, xy_position: tuple, radius: float) -> list:
-        """get_adjacent_nodes: returns nodes around a given position within radius."""
-        pass
 
-    def remove_nodes(self, node_list: list) -> None:
-        """remove_nodes: given list of nodes, removes all nodes from graph"""
-        pass
-
-
-
-
-    def djikstras(self, start_node, target_node):
+    def djikstras(self, start_node, target_node) -> None:
+        """djikstras: Returns shortest path between two nodes"""
         start_node.distance = 0
         heap = [(0, start_node)]
 
@@ -126,7 +117,8 @@ class Graph:
 
 
 
-    def get_shortest_distance(self, target: Node):
+    def get_shortest_distance(self, target: Node) :
+        """get_shortest_distance: Returns shortest distance and path to target node"""
         path = []
         current_node = target
 
