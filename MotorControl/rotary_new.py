@@ -9,8 +9,8 @@ pin_rotary_b = 21
 class RotaryEncoder:
     """Rotary Encoder class to determine linear and angular velocities for feedback into control loop"""
     def __init__(self, pin_a, pin_b):
-        self.pin_a = pin_a
-        self.pin_b = pin_b
+        self.pin_a = pin_b
+        self.pin_b = pin_a
         self.count = 0
         self.prev_count = 0
         self.state = None
@@ -27,7 +27,6 @@ class RotaryEncoder:
     def encoder_callback(self, pin):
         a_state = GPIO.input(self.pin_a)
         b_state = GPIO.input(self.pin_b)
-
         if self.state is not None:
             if (self.state[0], self.state[1]) == (0,1):
                 if (a_state, b_state) == (1,1):

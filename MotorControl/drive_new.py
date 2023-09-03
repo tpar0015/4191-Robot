@@ -1,21 +1,23 @@
+import sys
 import time
 import RPi.GPIO as GPIO
 from rotary_new import RotaryEncoder
 from motorctl_new import Motor
 import numpy as np
 import math
+sys.path.append("/home/tom/4191-Robot/")
 from pins import *
 
 class Drive:
     def __init__(self, pose):
-        self.left_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
-        self.right_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
-        self.left_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
-        self.right_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
+        self.right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
+        self.left_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
+        self.right_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
+        self.left_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
 
-        self.turn_radius = 0.121
-        self.wheel_radius = 0.05
-        self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in metres
+        self.turn_radius = 121
+        self.wheel_radius = 50
+        self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in mm
 
         self.speed = 100
         self.pose = pose
@@ -122,7 +124,11 @@ class Drive:
         right_ticks = self.right_encoder.count
         diff_ticks = left_ticks - right_ticks
 
+        print("Number of Ticks: ", num_ticks)
+        print("Starting...")
+        time.sleep(1)
         while self.left_encoder.count + self.right_encoder.count < num_ticks:
+            print("Tick Count: ", self.left_encoder.count + self.right_encoder.count)
             if diff_ticks > 0:
                 left_speed = max(speed - math.floor(diff_ticks / (2 / self.gain)),0)
                 right_speed = speed
@@ -154,7 +160,12 @@ class Drive:
         return self.pose
 
 if __name__== "__main__":
-    GPIO.cleanup
     robot_control = Drive([0,0,0])
-    robot_control.drive_to_point(100,100, None)
-    print(robot_control.get_pose())
+    try:
+        robot_control.drive_to_point(10,0,None)
+    except KeyboardInterrupt:
+        robot_control.left_motor.stop()
+        robot_control.right_motor.stop()
+    GPIO.cleanup()
+
+
