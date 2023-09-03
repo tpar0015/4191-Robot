@@ -214,7 +214,8 @@ class Map:
 if __name__ == '__main__':
     map_test = Map((1000, 1000), 50, loc=(500,0,np.pi/6))
     map_test.generate_map()
-    end_node = map_test.G.get_nearest_node((900, 950))
+    end_node_xy = (900, 950)
+    end_node = map_test.G.get_nearest_node(end_node_xy)
     map_test.remap(150, 150)
-    map_test.update_path(end_node)
+    map_test.update_path(end_node_xy)
     map_test.draw_arena(draw_path=True)
