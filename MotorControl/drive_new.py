@@ -7,9 +7,9 @@ import numpy as np
 import math
 sys.path.append("/home/tom/4191-Robot/")
 from pins import *
-
+from multiprocessing import Queue
 class Drive:
-    def __init__(self, pose):
+    def __init__(self, pose, queue: Queue):
         self.right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
         self.left_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
         self.right_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
@@ -23,6 +23,7 @@ class Drive:
         self.pose = pose
         self.gain = 2
 
+        self.queue = queue
     def turn(self, theta):
         """Turns robot left by theta radians"""
         self.stops_by_speed()
@@ -155,12 +156,14 @@ class Drive:
             # Difference in angle between current and desired
             theta_diff = theta_end - self.pose[2]
             self.turn(theta_diff)
-
+        # Adds pose to queue
+        self.queue.put(self.get_pose())
     def get_pose(self):
         return self.pose
 
 if __name__== "__main__":
-    robot_control = Drive([0,0,0])
+    test_queue = Queue()
+    robot_control = Drive([0,0,0], test_queue)
     try:
         robot_control.drive_to_point(10,0,None)
     except KeyboardInterrupt:

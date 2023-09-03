@@ -60,11 +60,11 @@ class Map:
             for j in i:
                 self.G.add_node(j)
 
-    def update_location(self, encoder_readout) -> None:
+    def update_location(self, pose) -> None:
         """
         Updates predicted location on nodal map
         """
-        self.location = encoder_readout
+        self.location = pose
 
 
     def remap(self, ultrasonic_readout, object_size) -> None:
@@ -82,13 +82,17 @@ class Map:
         for node in obstacle_nodes:
             self.G.set_obstacle(node)
 
-    def update_path(self, end_node) -> None:
+    def update_path(self, waypoint) -> None:
         """
         Updates path to avoid any new obstacles
         """
         start_node = self.G.get_nearest_node(self.location[:2])
-        self.G.djikstras(start_node, end_node)
-        _, self.path = self.G.get_shortest_distance(end_node)
+        end_node = self.G.get_nearest_node(waypoint[:2])
+        if end_node is not None:
+            self.G.djikstras(start_node, end_node)
+            _, self.path = self.G.get_shortest_distance(end_node)
+        else:
+            print("Cant find waypoint.")
 
     def get_path_xy(self) -> list:
         """
@@ -98,6 +102,17 @@ class Map:
         for node in self.path:
             path_xy.append(self.G[eval(node)].xy)
         return path_xy
+
+    def check_obstacle(self, ultrasonic_readout: float, detect_distance) -> bool:
+        """Checks if ultrasonic readout detected obstacle, if so remaps and updates path"""
+
+        if ultrasonic_readout < detect_distance:
+            self.remap(ultrasonic_readout, 250)
+            self.update_path
+            return True
+        else:
+            return False
+
 
     def bezier_curve(self, t):
         """
