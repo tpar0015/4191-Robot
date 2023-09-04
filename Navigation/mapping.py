@@ -7,7 +7,9 @@ Date Modified: 2023-08-23
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from graph import Graph, Node
+import sys
+sys.path.append("/home/tom/4191-Robot")
+from Navigation.graph import Graph, Node
 from math import comb
 # Recieve position from rotary encoders
 # Recieve readouts from ultrasonic sensor

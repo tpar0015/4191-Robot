@@ -13,7 +13,12 @@ from multiprocessing import Queue
 # 1. send singnal to ultrasonic sensor(trig) and sensor send signal to sense the distance
 # 2. wait until sensor recieve the signal to calculate distance
 # 3. calculate via formula
-
+class Distance_Object:
+    def __init__(self, distance):
+        self.distance = distance
+    
+    def get_distance(self):
+        return self.distance
 
 class Ultrasonic:
     """
@@ -55,7 +60,7 @@ class Ultrasonic:
         GPIO.output(self.trig_pin, GPIO.HIGH)
         GPIO.output(self.trig_pin, GPIO.LOW)
         ping_time = self.pulse(self.echo_pin, GPIO.HIGH, self.time_out)
-        distance = ping_time * 340 / 2 / 1e4  # speed of sound 340m/s
+        distance = ping_time * 340 / 2 / 1e3  # speed of sound 340m/s
         self.distance = distance
     
     def get_distance(self) -> float:
@@ -71,8 +76,8 @@ class Ultrasonic:
         while True:
             self.get_sonar()
             distance = self.get_distance()
-            self.queue.put(self.get_distance)
-            print("Distance: %.2f cm" % (distance))
+            self.queue.put(self.get_distance())
+            print("Distance: %.2f mm" % (distance))
             # if distance < 10:
             #     self.led.light_on()
             # else:

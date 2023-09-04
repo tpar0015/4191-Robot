@@ -26,15 +26,15 @@ import numpy as np
 from MotorControl.drive_new import Drive
 # Sensors
 from ultrasonic import Ultrasonic
-from camera import capture
-from detector import detect_obstacle
+# from camera import capture
+# from detector import detect_obstacle
 
 # Localisation, Path Planning & Navigation
 from Navigation.graph import Node, Graph
 from Navigation.mapping import Map
 
 # Other 
-from led import ledCRL
+# from led import ledCRL
 
 import multiprocessing
 from multiprocessing import Process, Value, Array, Queue
@@ -44,8 +44,9 @@ import argparse
 import ast
 
 
-class Robot_Controller:
+class Robot_Controller():
     def __init__(self):
+        GPIO.setmode(GPIO.BCM)
         # Initialize Queues
         self.ultrasonic_queue = Queue()
         self.drive_queue = Queue()
@@ -53,15 +54,16 @@ class Robot_Controller:
 
         ## Define classes
         # LED 
-        self.led = ledCRL() # If not used in ultrasonic already
+        # self.led = ledCRL() # If not used in ultrasonic already
 
         # Initialise map
-        start_pose = [0, 0, 0]
-        self.map = Map((1200,1200), 20, start_pose)
+        start_pose = [50, 50, 0]
+        self.map = Map((1200,1200), 50, start_pose)
         self.map.generate_map()
         self.pose = start_pose
         # Initialise robot
         self.Control = Drive(start_pose, self.drive_queue)
+        
         # Initialize Ultrasonic
         self.ultrasonic_proc = multiprocessing.Process(target=self.run_ultrasonic, args=())
         self.ultrasonic_proc.start()
@@ -74,6 +76,9 @@ class Robot_Controller:
         ultrasonic = Ultrasonic(self.ultrasonic_queue)
         ultrasonic.setup()
         ultrasonic.loop()
+    
+    def drive(self, x, y, theta_end):
+        self.Control.drive_to_point(x,y, theta_end)
 
     def get_queue(self, queue):
         if queue.empty():
@@ -85,6 +90,7 @@ class Robot_Controller:
         # Calculate path
         self.map.update_path(waypoint)
         path = self.map.get_path_xy()
+        print(path)
         maps = [self.map]
         # Drive to each node
         node_idx = 0
@@ -95,11 +101,12 @@ class Robot_Controller:
             self.map.update_location(pose)
 
             ultrasonic_readout = self.get_queue(self.ultrasonic_queue)
-            if self.ultrasonic_queue is not None:            
+            if ultrasonic_readout is not None:            
                 remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
             else:
                 remapped_bool = False
             if remapped_bool:
+                print("Remapped")
                 path = self.map.get_path_xy()    # Updates path
                 node_idx = 0
                 # For testing
@@ -107,10 +114,11 @@ class Robot_Controller:
                 continue    # Skips rest of iteration
 
             x,y = path[node_idx]
-            self.drive_proc = Process(target=self.Control.drive_to_point, args=(x, y, theta_end=np.pi/2))
-            self.drive_proc.start()
+            theta_end = 0
+            self.drive(x, y, theta_end)
             self.pose = self.Control.get_pose()
             print(f"Arrived at Node: {path[node_idx]}, Current Position: {pose}")
+            node_idx += 1
             time.sleep(5)
         return maps     # Returns list of maps for testing
     def multiple_waypoints(self, waypoints):
@@ -118,15 +126,15 @@ class Robot_Controller:
             self.drive_to_waypoint(waypoint)
 
     def terminate_processes(self):
+        self.Control.left_motor.stop()
+        self.Control.right_motor.stop()
+        self.Control.left_encoder.reset_count()
+        self.Control.right_encoder.reset_count()
         self.ultrasonic_proc.terminate()
         self.ultrasonic_proc.join()
         if self.drive_proc is not None:
             self.drive_proc.terminate()
             self.drive_proc.join()
-        self.Control.left_motor.stop()
-        self.Control.right_motor.stop()
-        self.Control.left_encoder.reset_count()
-        self.Control.right_encoder.reset_count()
         GPIO.cleanup()
     ################################################################
 # Functions for multiprocessing
@@ -134,13 +142,15 @@ class Robot_Controller:
 
 if __name__ == "__main__":
     Robot = Robot_Controller()
+    maps = [Robot.map]
     try:
-        maps = Robot.drive_to_waypoint([500, 500])
+        Robot.drive_to_waypoint((500,500))
+        pass
     except KeyboardInterrupt:
         Robot.terminate_processes()
-
     for map in maps:
-        map.draw_map(draw_path=True)
+        print(map.get_path_xy())
+        map.draw_arena(draw_path=True)
     # # Initialise args
     # parser = argparse.ArgumentParser()
     # parser.add_argument("--wayp0", type=str, default='[-1,-1]')

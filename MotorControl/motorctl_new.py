@@ -3,7 +3,7 @@ import time
 import RPi.GPIO as GPIO
 sys.path.append("/home/tom/4191-Robot/")
 from pins import *
-from rotary_new import RotaryEncoder
+from MotorControl.rotary_new import RotaryEncoder
 
 class Motor():
     """Module for controlling a single motor"""
