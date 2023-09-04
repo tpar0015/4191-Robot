@@ -7,7 +7,7 @@ from MotorControl.rotary_new import RotaryEncoder
 
 class Motor():
     """Module for controlling a single motor"""
-    def __init__(self, enable_pin, pin_a, pin_b, speed=100):
+    def __init__(self, enable_pin, pin_a, pin_b, speed=0):
         self.enable_pin = enable_pin
         self.pin_a = pin_a
         self.pin_b = pin_b
@@ -39,16 +39,19 @@ class Motor():
         self.pwm1.ChangeDutyCycle(0)
         self.pwm2.ChangeDutyCycle(0)
 
-    def forward(self, speed):
-        """Sets motor speed"""
-        self.speed = speed
-        self.pwm1.ChangeDutyCycle(speed)
+    def forward(self):
+        self.pwm1.ChangeDutyCycle(self.speed)
         self.pwm2.ChangeDutyCycle(0)
-    def backward(self, speed):
-        """Sets motor speed"""
-        self.speed = speed
-        self.pwm2.ChangeDutyCycle(speed)
+    def backward(self):
+        self.pwm2.ChangeDutyCycle(self.speed)
         self.pwm1.ChangeDutyCycle(0)
+
+    def set_speed(self, speed):
+        self.speed = speed
+        if speed >= 0:
+            self.forward()
+        else:
+            self.backward()
 
 if __name__=="__main__":
     right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])

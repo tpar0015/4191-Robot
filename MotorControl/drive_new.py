@@ -16,6 +16,7 @@ class Drive:
         self.right_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
         self.left_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
         print("Initialized Encoders")
+        self.total_ticks = 0
         self.turn_radius = 121
         # self.wheel_radius = 50
         # self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in mm
@@ -33,21 +34,33 @@ class Drive:
             self.queue = queue
         else:
             self.queue = Queue()
+    
+    def update_total_ticks(self):
+        self.total_ticks += self.left_encoder.count + self.right_encoder.count
+
+    def get_total_ticks(self):
+        self.update_total_ticks
+        return self.total_ticks
+
     def set_speed(self, speed):
         self.speed = speed
 
     def turn(self, theta, pid):
         """Turns robot left by theta radians"""
         self.stops_by_speed()
-        self.reset_encoders()
         # Calculate number of ticks to turn
         turn_distance = abs(theta) * self.turn_radius
         num_ticks = turn_distance / self.distance_per_tick
 
         if theta > 0:
-            self.speed = -self.speed
+            left_speed = -self.speed
+            right_speed = self.speed
+        else:
+            left_speed = self.speed
+            right_speed = -self.speed
+
         # Do Turn
-        self.control(num_ticks, self.speed, pid)
+        self.control(num_ticks, left_speed, right_speed, pid)
         
         self.left_motor.stop()
         self.right_motor.stop()
@@ -66,15 +79,10 @@ class Drive:
     def drive_forward(self, distance, pid):
         """Drives robot forward by distance"""
         assert distance > 0, "Distance must be positive"
-        # Reset encoders and stop motors
-        self.reset_encoders()
+        # Stop Motors
         self.stops_by_speed()
-        time.sleep(1)
-
-        # Set forward mode
-        self.left_motor.forward()
-        self.right_motor.forward()
-
+        # Set forward both motors
+        left_speed, right_speed = self.speed, self.speed
         # Calculate number of ticks to drive
         num_ticks = 2 * distance / self.distance_per_tick
         print("====Forward====")
@@ -82,7 +90,7 @@ class Drive:
         print("Drive Ticks: ", num_ticks)
         time.sleep(2)
         # Run Motors
-        self.control(num_ticks, self.speed, pid_forward)
+        self.control(num_ticks, left_speed, right_speed, pid)
         self.left_motor.stop()
         self.right_motor.stop()
         # Check Ticks
@@ -102,17 +110,15 @@ class Drive:
         """Drives robot backward by distance"""
         
         assert distance > 0, "Distance must be positive"
-        time.sleep(0.1)
-        self.reset_encoders()
         self.stops_by_speed()
+        time.sleep(0.1)
 
-        self.left_motor.backward()
-        self.right_motor.backward()
-
+        # Set backward both motors
+        left_speed, right_speed = -self.speed, -self.speed
 
         num_ticks = distance / self.distance_per_tick
 
-        self.control(num_ticks, self.speed, pid)
+        self.control(num_ticks, left_speed, right_speed, pid)
         self.left_motor.stop()
         self.right_motor.stop()
 
@@ -133,7 +139,7 @@ class Drive:
         self.left_encoder.reset_count()
         self.right_encoder.reset_count()
 
-    def control(self, num_ticks, speed, pid):
+    def control(self, num_ticks, left_speed, right_speed, pid):
         """Drives motors for num_ticks at speed, with PID tuning"""
         left_ticks = self.left_encoder.count
         right_ticks = self.right_encoder.count
@@ -144,17 +150,19 @@ class Drive:
         print("Starting...")
         time.sleep(1)
         diff_ticks = self.left_encoder.count - self.right_encoder.count
+        prev_diff_ticks = 0
         Kp, Ki, Kd = pid
         P = 0
         I = 0
         D = 0
-        prev_diff_ticks = 0
-        print(self.left_encoder.count, self.right_encoder.count)
-        while self.left_encoder.count + self.right_encoder.count < num_ticks:
-            print("in loop")
+        
+
+        total_ticks_start = self.get_total_ticks()
+        # While num_ticks not reached
+        while self.get_total_ticks() < num_ticks + total_ticks_start:
             diff_ticks = self.left_encoder.count - self.right_encoder.count
             print(f"Left Ticks: {self.left_encoder.count}, Right Ticks: {self.right_encoder.count}")
-            print("Diff Ticks: ", diff_ticks)
+            print("Total Ticks: ", self.get_total_ticks())
             if diff_ticks != 0:
                 P = Kp * abs(diff_ticks)/abs(diff_ticks)
                 I += Ki * abs(diff_ticks)/abs(diff_ticks)
@@ -163,26 +171,20 @@ class Drive:
             sum_pid = min(P + I + D, 100)
             tune = 1 - sum_pid/100
             print("tune: ", tune)
-            if diff_ticks > 0:
-                # left_speed = min(speed,max(speed - math.floor(diff_ticks / (2 / self.Kp)),0))
-                left_speed = tune*speed
-                right_speed = speed
-            elif diff_ticks < 0:
-                left_speed = speed
-                right_speed = tune*speed
-                # right_speed = min(max(speed - math.ceil(diff_ticks / (2 / self.Kp)),0), speed)
-                # right_speed = max(min(P + I + D, 100), 0)
-            else:
-                left_speed = speed
-                right_speed = speed
-            if left_speed >= 0:
-                self.left_motor.forward(left_speed)
-            else:
-                self.left_motor.backward(left_speed)
-            if right_speed >= 0:
-                self.right_motor.forward(right_speed)
-            else:
-                self.right_motor.backward(right_speed)
+            # if diff_ticks > 0:
+            #     # left_speed = min(speed,max(speed - math.floor(diff_ticks / (2 / self.Kp)),0))
+            #     left_speed = tune*speed
+            #     right_speed = speed
+            # elif diff_ticks < 0:
+            #     left_speed = speed
+            #     right_speed = tune*speed
+            #     # right_speed = min(max(speed - math.ceil(diff_ticks / (2 / self.Kp)),0), speed)
+            #     # right_speed = max(min(P + I + D, 100), 0)
+            # else:
+            #     left_speed = speed
+            #     right_speed = speed
+            self.right_motor.set_speed(right_speed)
+            self.left_motor.set_speed(left_speed)
             prev_diff_ticks = diff_ticks
 
     def drive_to_point(self, x, y, theta_end=None):
@@ -229,9 +231,10 @@ if __name__== "__main__":
         # robot_control.turn(np.pi/2)
         
         print("Done")
-    except Exception:
+    except:
         robot_control.left_motor.stop()
         robot_control.right_motor.stop()
+        GPIO.cleanup()
     GPIO.cleanup()
 
 
