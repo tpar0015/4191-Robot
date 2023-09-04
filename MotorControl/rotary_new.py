@@ -19,8 +19,8 @@ class RotaryEncoder:
         GPIO.setup(self.pin_a, GPIO.IN)
         GPIO.setup(self.pin_b, GPIO.IN)
 
-        GPIO.add_event_detect(self.pin_a, GPIO.BOTH, callback=self.encoder_callback)
-        GPIO.add_event_detect(self.pin_b, GPIO.BOTH, callback=self.encoder_callback)
+        GPIO.add_event_detect(self.pin_a, GPIO.RISING, callback=self.encoder_callback)
+        GPIO.add_event_detect(self.pin_b, GPIO.RISING, callback=self.encoder_callback)
 
         self.time_check = time.time()
 

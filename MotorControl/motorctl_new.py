@@ -18,34 +18,44 @@ class Motor():
         GPIO.setup(self.pin_b, GPIO.OUT)
 
         self.speed = speed
-        self.pwm = GPIO.PWM(self.enable_pin, 100)
-        self.pwm.start(speed)
+        self.pwm = GPIO.output(self.enable_pin, GPIO.HIGH)
+        self.pwm1 = GPIO.PWM(self.pin_a, 100)
+        self.pwm2 = GPIO.PWM(self.pin_b, 100)
+        self.pwm1.start(self.speed)
+        self.pwm2.start(self.speed)
+        
 
-    def forward(self):
-        """Moves motor forward"""
-        GPIO.output(self.pin_a, GPIO.HIGH)
-        GPIO.output(self.pin_b, GPIO.LOW)
+    # def forward(self):
+    #     """Moves motor forward"""
+    #     GPIO.PWM(self.pin_a, 100)
+    #     GPIO.output(self.pin_b, GPIO.LOW)
 
 
-    def backward(self):
-        """Moves motor backward"""
-        GPIO.output(self.pin_a, GPIO.LOW)
-        GPIO.output(self.pin_b, GPIO.HIGH)
-
+    # def backward(self, ):
+    #     """Moves motor backward"""
+    #     pass
     def stop(self):
         """Stops motor"""
-        GPIO.output(self.pin_a, GPIO.LOW)
-        GPIO.output(self.pin_b, GPIO.LOW)
+        self.pwm1.ChangeDutyCycle(0)
+        self.pwm2.ChangeDutyCycle(0)
 
-    def set_speed(self, speed):
+    def forward(self, speed):
         """Sets motor speed"""
         self.speed = speed
-        self.pwm.ChangeDutyCycle(speed)
+        self.pwm1.ChangeDutyCycle(speed)
+        self.pwm2.ChangeDutyCycle(0)
+    def backward(self, speed):
+        """Sets motor speed"""
+        self.speed = speed
+        self.pwm2.ChangeDutyCycle(speed)
+        self.pwm1.ChangeDutyCycle(0)
 
 if __name__=="__main__":
     right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
     left_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
-    left_motor.forward()
-    time.sleep(5)
+    left_motor.forward(50)
+    right_motor.forward(100)
+    time.sleep(2)
     left_motor.stop()
+    right_motor.stop()
     GPIO.cleanup()
