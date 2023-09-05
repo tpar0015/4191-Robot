@@ -4,31 +4,36 @@ import RPi.GPIO as GPIO
 
 import numpy as np
 import math
+
 sys.path.append("/home/tom/4191-Robot/")
 from MotorControl.rotary_new import RotaryEncoder
 from MotorControl.motorctl_new import Motor
 from pins import *
 
+
 class Drive:
     def __init__(self, pose):
-        self.right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"]) # 设置 motor
+        self.right_motor = Motor(
+            PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"]
+        )  # 设置 motor
         self.left_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
 
-        self.right_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"]) # 设置encoder
-        self.left_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
+        self.right_encoder = RotaryEncoder(
+            PINS["encoder1_a"], PINS["encoder1_b"]
+        )  # 设置encoder
+        self.left_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"])
         print("Initialized Encoders")
 
-        self.total_ticks = 0    # ticks 和 radius
+        self.total_ticks = 0  # ticks 和 radius
         self.turn_radius = 110
 
         self.wheel_radius = 0.0524 * 1000  # Metres
-        self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in metres
-        self.speed = 45 # 1. reduce current speed to 50
+        self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (
+            74.83 * 48
+        )  # Distance per tick in metres
+        self.speed = 45  # 1. reduce current speed to 50
         self.pose = pose
 
-
-
-    
     def update_total_ticks(self):
         self.total_ticks = self.left_encoder.count + self.right_encoder.count
 
@@ -55,7 +60,7 @@ class Drive:
 
         # Do Turn
         self.control(num_ticks, left_speed, right_speed)
-        
+
         self.left_motor.stop()
         self.right_motor.stop()
 
@@ -69,9 +74,9 @@ class Drive:
         else:
             self.pose[2] -= sum_ticks * self.distance_per_tick / self.turn_radius
 
-# Forward Testing results:
-# 1m = 9000
-        
+    # Forward Testing results:
+    # 1m = 9000
+
     def drive_forward(self, distance):
         """Drives robot forward by distance"""
         assert distance > 0, "Distance must be positive"
@@ -104,7 +109,7 @@ class Drive:
 
     def drive_backward(self, distance, pid):
         """Drives robot backward by distance"""
-        
+
         assert distance > 0, "Distance must be positive"
         self.stops_by_speed()
         time.sleep(0.1)
@@ -135,74 +140,78 @@ class Drive:
         self.left_encoder.reset_count()
         self.right_encoder.reset_count()
 
-    def degrees_to_range(self,degrees):
+    def degrees_to_range(self, degrees):
         degrees = degrees % 360  # type: ignore # Ensure degrees are within 0 to 359
         if degrees > 180:
             degrees -= 360  # Convert to the range -180 to +179
         return degrees
 
-    def drive_forward_tick(self,ticks):
-        self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
+    def drive_forward_tick(self, ticks):
+        self.right_motor.set_speed(
+            self.speed + 2.5
+        )  # Adjust the speed of right motor (motor speed uncertainty)
         self.left_motor.set_speed(self.speed)
         left_ticks = self.left_encoder.count
         right_ticks = self.right_encoder.count
-        print("Initial left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
+        print("Initial left ticks: ", left_ticks, " right ticks", right_ticks, "\n")
 
-        while (left_ticks<ticks or right_ticks <ticks):
-            if(left_ticks>ticks):
+        while left_ticks < ticks or right_ticks < ticks:
+            if left_ticks > ticks:
                 self.left_motor.stop()
-            if(right_ticks>ticks):
+            if right_ticks > ticks:
                 self.right_motor.stop()
             left_ticks = self.left_encoder.count
             right_ticks = self.right_encoder.count
-            print("Cur left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
-        
+            print("Cur left ticks: ", left_ticks, " right ticks", right_ticks, "\n")
+
         self.stops_by_speed()
         self.reset_encoders()
-    
-    def drive_turn_tick(self,ticks,left_right):
-        if(left_right==1):
+
+    def drive_turn_tick(self, ticks, left_right):
+        if left_right == 1:
             # LEFT
-            self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
+            self.right_motor.set_speed(
+                self.speed + 2.5
+            )  # Adjust the speed of right motor (motor speed uncertainty)
             self.left_motor.set_speed(-self.speed)
         else:
             # RIGHT
-            self.right_motor.set_speed(-self.speed-2.5) # Adjust the speed of right motor (motor speed uncertainty)
+            self.right_motor.set_speed(
+                -self.speed - 2.5
+            )  # Adjust the speed of right motor (motor speed uncertainty)
             self.left_motor.set_speed(self.speed)
         left_ticks = self.left_encoder.count
         right_ticks = self.right_encoder.count
-        print("Initial left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
+        print("Initial left ticks: ", left_ticks, " right ticks", right_ticks, "\n")
 
-        while (abs(left_ticks)<ticks or abs(right_ticks) <ticks):
-            if(left_ticks>ticks):
+        while abs(left_ticks) < ticks or abs(right_ticks) < ticks:
+            if left_ticks > ticks:
                 self.left_motor.stop()
-            if(right_ticks>ticks):
+            if right_ticks > ticks:
                 self.right_motor.stop()
             left_ticks = self.left_encoder.count
             right_ticks = self.right_encoder.count
-            print("Cur left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
-        
+            print("Cur left ticks: ", left_ticks, " right ticks", right_ticks, "\n")
+
         self.stops_by_speed()
         self.reset_encoders()
 
-
     # passing distance in m
     def drive_dis(self, distance):
-        ticks_forward = round(distance*9000)
+        ticks_forward = round(distance * 9000)
         self.drive_forward_tick(ticks_forward)
 
-
-    def drive_deg(self, deg,right_left):
-        deg_ticks = 1550 * deg/90 
-        right_left = 1 # left
-        if(deg_ticks>0):
-            right_left = 0 # right
-        self.drive_turn_tick(abs(deg_ticks),right_left)
+    def drive_deg(self, deg, right_left):
+        deg_ticks = 1550 * deg / 90
+        right_left = 1  # left
+        if deg_ticks > 0:
+            right_left = 0  # right
+        self.drive_turn_tick(abs(deg_ticks), right_left)
         print("\n pose check 1 ", self.pose)
         self.pose[2] -= deg
         print("\n deg: ", deg)
         print("\n pose : ", self.pose)
-        self.pose[2]  = self.degrees_to_range(self.pose[2]) # convert to accurate range
+        self.pose[2] = self.degrees_to_range(self.pose[2])  # convert to accurate range
         print("Cur _ pose check : ", self.pose)
         input("CHHHHHK")
 
@@ -216,15 +225,15 @@ class Drive:
         print("Number of Ticks: ", num_ticks)
         print("Starting...")
 
-        
-
         total_ticks_start = self.get_total_ticks()
         # While num_ticks not reached
         while self.get_total_ticks() < num_ticks + total_ticks_start - 60:
             self.get_total_ticks()
             diff_ticks = self.left_encoder.count - self.right_encoder.count
-            print(f"Left Ticks: {self.left_encoder.count}, Right Ticks: {self.right_encoder.count}")
-            
+            print(
+                f"Left Ticks: {self.left_encoder.count}, Right Ticks: {self.right_encoder.count}"
+            )
+
             self.right_motor.set_speed(right_speed)
             self.left_motor.set_speed(left_speed)
             self.update_total_ticks()
@@ -238,25 +247,24 @@ class Drive:
         """Drives robot to point (x, y)"""
         dx = x - self.pose[0]
         dy = y - self.pose[1]
- 
-        #theta = math.atan2(dy, dx) 
+
+        # theta = math.atan2(dy, dx)
         # # the angle between cur_poos to des
         theta = math.degrees(math.atan2(dy, dx))
-        print("\n initial check : ", "dx:  ", dx, "dy: " , dy, "theta : ", theta)
+        print("\n initial check : ", "dx:  ", dx, "dy: ", dy, "theta : ", theta)
         print("\n curent robot orientation: ", self.pose[2])
         rot_deg = self.pose[2] - theta
         print("\n rot deg: ", rot_deg)
         rot_deg = self.degrees_to_range(rot_deg)
         print("\n after adj : ", rot_deg)
 
-
         print("=====Start Turn=====")
-        # if theta is positive: 
+        # if theta is positive:
         # robot need to rotate right
         # ~ ~ negative
         # ~ ~ left
         print("===Theta===: ", rot_deg)
-        self.drive_deg(rot_deg,None)
+        self.drive_deg(rot_deg, None)
 
         input("check")
         time.sleep(2)
@@ -269,18 +277,18 @@ class Drive:
         input("Check")
 
         self.drive_dis(distance)
-        self.pose[:2] = [x,y]
+        self.pose[:2] = [x, y]
         # if theta_end is not None:
         #     # Difference in angle between current and desired
         #     theta_diff = theta_end - self.pose[2]
         #     if theta_diff > np.pi/16:
         #         self.turn(theta_diff)
 
-
-    def drive_to_waypoints(self, waypoints:list):
+    def drive_to_waypoints(self, waypoints: list):
         for waypoint in waypoints:
-            self.drive_to_point(waypoint[0],waypoint[1]) # TODO: can change the theta end
-
+            self.drive_to_point(
+                waypoint[0], waypoint[1]
+            )  # TODO: can change the theta end
 
     def get_pose(self):
         return self.pose
@@ -288,62 +296,55 @@ class Drive:
     def clean(self):
         GPIO.cleanup()
 
+
 # Forward Testing results:
 # 1m = 9000
 # 1550 = 90deg
 # 1 == left 0 == right
-if __name__== "__main__":
-
-    robot_control = Drive([0.2,-0.2,90])
+if __name__ == "__main__":
+    robot_control = Drive([0.2, -0.2, 90])
     try:
-        while(True): 
-
-            robot_control.drive_to_point(-0.4,-0.4)
+        while True:
+            robot_control.drive_to_point(-0.4, -0.4)
             input("drive tes")
-            robot_control.drive_deg(90,1)
+            robot_control.drive_deg(90, 1)
             print("turning 90degs left\n")
             time.sleep(0.5)
 
             robot_control.drive_dis(0.4)
-            #robot_control.wheelCalibration_forward(3600)
+            # robot_control.wheelCalibration_forward(3600)
             print("40cm forward \n")
             time.sleep(0.5)
-            robot_control.drive_deg(90,0)
-            #robot_control.wheelCalibration_turning(1550,0)
+            robot_control.drive_deg(90, 0)
+            # robot_control.wheelCalibration_turning(1550,0)
             print("turning 90degs right\n")
             time.sleep(0.5)
 
             robot_control.drive_dis(0.8)
-            #robot_control.wheelCalibration_forward(7200)
+            # robot_control.wheelCalibration_forward(7200)
             print("80cm forward \n")
             time.sleep(0.5)
 
             input("check")
         # moving calibration
 
-
         # theta = -np.pi
         # robot_control.turn(theta)
         # print("second round")
         # time.sleep(2)
-        
+
         # theta = np.pi
         # robot_control.turn(theta)
 
-        
-
-        
-
-
         input("c")
-        robot_control.drive_to_point(200,200,None)
+        robot_control.drive_to_point(200, 200, None)
         # print("1st point, position: ",robot_control.pose)
         # time.sleep(5)
         # robot_control.drive_to_point(200,300, None)
         # robot_control.drive_forward(50, pid_forward)
         # robot_control.turn(-np.pi/4, pid_turn)
         # robot_control.turn(np.pi/2)
-        
+
         print("Done")
     except Exception as e:
         print(e.args)
@@ -351,5 +352,3 @@ if __name__== "__main__":
     #     robot_control.right_motor.stop()
     #     GPIO.cleanup()
     GPIO.cleanup()
-
-
