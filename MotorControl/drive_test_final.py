@@ -193,14 +193,18 @@ class Drive:
 
 
     def drive_deg(self, deg,right_left):
-        deg = 1550 * deg/90 
+        deg_ticks = 1550 * deg/90 
         right_left = 1 # left
-        if(deg>0):
+        if(deg_ticks>0):
             right_left = 0 # right
-        self.drive_turn_tick(abs(deg),right_left)
-        self.pose[2] += deg
+        self.drive_turn_tick(abs(deg_ticks),right_left)
+        print("\n pose check 1 ", self.pose)
+        self.pose[2] -= deg
+        print("\n deg: ", deg)
+        print("\n pose : ", self.pose)
         self.pose[2]  = self.degrees_to_range(self.pose[2]) # convert to accurate range
         print("Cur _ pose check : ", self.pose)
+        input("CHHHHHK")
 
     def control(self, num_ticks, left_speed, right_speed):
         """Drives motors for num_ticks at speed, with PID tuning"""
@@ -290,7 +294,7 @@ class Drive:
 # 1 == left 0 == right
 if __name__== "__main__":
 
-    robot_control = Drive([0,0,90])
+    robot_control = Drive([0.2,-0.2,90])
     try:
         while(True): 
 
