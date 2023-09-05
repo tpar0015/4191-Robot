@@ -2,18 +2,18 @@
 import math
 import time
 from drive_new import Drive
+import RPi._GPIO as GPIO
 
 
 
 class Calibrate:
     def __init__(self):
-        self.Controller = Drive([0,0,0])
+        self.Controller = Drive([0,0,0], [0,0,0], [0,0,0])
         self.dist_per_tick = (50 * 2 * math.pi) / (74.83 * 48)  # Distance per tick in mm
         self.wheel_radius = 50
     def drive_one_meter(self, speed):          
         self.Controller.set_speed(speed)
-        self.Controller.drive_forward(1000)
-        
+        self.Controller.drive_forward(100, self.Controller.pid_forward) 
     def get_num_ticks(self):
         return self.Controller.left_encoder.count + self.Controller.right_encoder.count
     
@@ -55,8 +55,26 @@ class Calibrate:
 
         return distance_per_tick / len(output)
 
+    def calibrate_stopping_ticks(self):
+        num_ticks = 1000
+        x = 0
+        while self.Controller.left_encoder.count + self.Controller.right_encoder.count < num_ticks:
+            print(self.Controller.left_encoder.count + self.Controller.right_encoder.count)
+            self.Controller.right_motor.set_speed(100)
+            self.Controller.left_motor.set_speed(100)
+            x = self.Controller.left_encoder.count + self.Controller.right_encoder.count
+        self.Controller.left_motor.stop()
+        x1 = self.Controller.left_encoder.count
+        self.Controller.right_motor.stop()
+        x2 = self.Controller.right_encoder.count
+        x = x1 + x2
+        print("Stopped")
+        time.sleep(1)
+        y = self.Controller.left_encoder.count + self.Controller.right_encoder.count
+        return y - x
 if __name__=="__main__":
     calibration = Calibrate()
-    calibration.drive_one_meter(100) 
+    print(calibration.calibrate_stopping_ticks())
+    GPIO.cleanup()
                 
 

@@ -17,7 +17,7 @@ class Drive:
         self.left_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
         print("Initialized Encoders")
         self.total_ticks = 0
-        self.turn_radius = 121
+        self.turn_radius = 110
         # self.wheel_radius = 50
         # self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in mm
         self.wheel_radius = 0.0524 * 1000  # Metres
@@ -36,7 +36,7 @@ class Drive:
             self.queue = Queue()
     
     def update_total_ticks(self):
-        self.total_ticks += self.left_encoder.count + self.right_encoder.count
+        self.total_ticks = self.left_encoder.count + self.right_encoder.count
 
     def get_total_ticks(self):
         self.update_total_ticks
@@ -159,48 +159,55 @@ class Drive:
 
         total_ticks_start = self.get_total_ticks()
         # While num_ticks not reached
-        while self.get_total_ticks() < num_ticks + total_ticks_start:
+        while self.get_total_ticks() < num_ticks + total_ticks_start - 60:
+            self.get_total_ticks()
             diff_ticks = self.left_encoder.count - self.right_encoder.count
             print(f"Left Ticks: {self.left_encoder.count}, Right Ticks: {self.right_encoder.count}")
-            print("Total Ticks: ", self.get_total_ticks())
+            # print("Total Ticks: ", self.get_total_ticks())
             if diff_ticks != 0:
                 P = Kp * abs(diff_ticks)/abs(diff_ticks)
                 I += Ki * abs(diff_ticks)/abs(diff_ticks)
                 D = Kd * abs(diff_ticks - prev_diff_ticks)/abs(diff_ticks)
-            print("P + I + D: ", P + I + D)
+            # print("P + I + D: ", P + I + D)
             sum_pid = min(P + I + D, 100)
             tune = 1 - sum_pid/100
-            print("tune: ", tune)
+            # print("tune: ", tune)
             # if diff_ticks > 0:
             #     # left_speed = min(speed,max(speed - math.floor(diff_ticks / (2 / self.Kp)),0))
-            #     left_speed = tune*speed
-            #     right_speed = speed
+            #     left_speed = tune*left_speed
+            #     right_speed = right_speed
             # elif diff_ticks < 0:
-            #     left_speed = speed
-            #     right_speed = tune*speed
+            #     left_speed = left_speed
+            #     right_speed = tune*right_speed
             #     # right_speed = min(max(speed - math.ceil(diff_ticks / (2 / self.Kp)),0), speed)
             #     # right_speed = max(min(P + I + D, 100), 0)
             # else:
-            #     left_speed = speed
-            #     right_speed = speed
+            #     left_speed = left_speed
+            #     right_speed = right_speed
             self.right_motor.set_speed(right_speed)
             self.left_motor.set_speed(left_speed)
+            self.update_total_ticks()
             prev_diff_ticks = diff_ticks
 
     def drive_to_point(self, x, y, theta_end=None):
         """Drives robot to point (x, y)"""
         dx = x - self.pose[0]
         dy = y - self.pose[1]
-        theta = math.atan2(dy, dx) - self.pose[2]
+        
+        theta = math.atan2(dy, dx) # the angle between cur_poos to des
+        print("cal check : ", "dx:  ", dx, "dy: " , dy, "theta : ", theta)
         print("=====Start Turn=====")
         print("===Theta===: ", theta)
+        
+        input("check")
         time.sleep(2)
-        self.turn(theta, self.pid_turn)
+        if abs(theta) > np.pi/16:
+            self.turn(theta, self.pid_turn)
         distance = math.sqrt(dx**2 + dy**2)
         if distance == 0:
             print("At Point")
             return
-
+        input("Check")
         time.sleep(0.1)
         self.drive_forward(distance, self.pid_forward)
         if theta_end is not None:
@@ -222,19 +229,36 @@ if __name__== "__main__":
     pid_turn = [0.65, 0.01, 0.01]
     robot_control = Drive([0,0,np.pi/2],pid_forward,pid_turn ,test_queue)
     try:
-        # robot_control.drive_to_point(200,0,None)
+
+
+        theta = -np.pi
+        robot_control.turn(theta, pid_turn)
+        print("second round")
+        time.sleep(2)
+        
+        theta = np.pi
+        robot_control.turn(theta, pid_turn)
+
+        
+
+        
+
+
+        input("c")
+        robot_control.drive_to_point(200,200,None)
         # print("1st point, position: ",robot_control.pose)
         # time.sleep(5)
         # robot_control.drive_to_point(200,300, None)
         # robot_control.drive_forward(50, pid_forward)
-        robot_control.turn(np.pi/4, pid_turn)
+        # robot_control.turn(-np.pi/4, pid_turn)
         # robot_control.turn(np.pi/2)
         
         print("Done")
-    except:
-        robot_control.left_motor.stop()
-        robot_control.right_motor.stop()
-        GPIO.cleanup()
+    except Exception as e:
+        print(e.args)
+    #     robot_control.left_motor.stop()
+    #     robot_control.right_motor.stop()
+    #     GPIO.cleanup()
     GPIO.cleanup()
 
 

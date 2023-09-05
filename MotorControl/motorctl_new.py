@@ -47,7 +47,7 @@ class Motor():
         self.pwm1.ChangeDutyCycle(0)
 
     def set_speed(self, speed):
-        self.speed = speed
+        self.speed = abs(speed)
         if speed >= 0:
             self.forward()
         else:
