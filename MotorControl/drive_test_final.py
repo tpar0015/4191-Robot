@@ -193,15 +193,18 @@ if __name__== "__main__":
 
     robot_control = Drive([0,0,np.pi/2])
     try:
+        robot_control.wheelCalibration_forward(1000)
+        input("check")
+        # moving calibration
 
 
-        theta = -np.pi
-        robot_control.turn(theta)
-        print("second round")
-        time.sleep(2)
+        # theta = -np.pi
+        # robot_control.turn(theta)
+        # print("second round")
+        # time.sleep(2)
         
-        theta = np.pi
-        robot_control.turn(theta)
+        # theta = np.pi
+        # robot_control.turn(theta)
 
         
 
