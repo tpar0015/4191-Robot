@@ -135,7 +135,7 @@ class Drive:
         self.left_encoder.reset_count()
         self.right_encoder.reset_count()
 
-    def wheelCalibration_forward(self,ticks):
+    def drive_forward_tick(self,ticks):
         self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
         self.left_motor.set_speed(self.speed)
         left_ticks = self.left_encoder.count
@@ -154,7 +154,7 @@ class Drive:
         self.stops_by_speed()
         self.reset_encoders()
     
-    def wheelCalibration_turning(self,ticks,left_right):
+    def drive_turn_tick(self,ticks,left_right):
         if(left_right==1):
 
             self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
@@ -177,7 +177,16 @@ class Drive:
         
         self.stops_by_speed()
         self.reset_encoders()
-        
+
+
+    # passing distance in m
+    def drive_dis(self, distance):
+        ticks_forward = round(distance*9000)
+        self.drive_forward_tick(ticks_forward)
+
+    def drive_deg(self, deg,right_left):
+        deg = 1550 * deg/90 
+        self.drive_turn_tick(deg,right_left)
     def control(self, num_ticks, left_speed, right_speed):
         """Drives motors for num_ticks at speed, with PID tuning"""
         left_ticks = self.left_encoder.count
@@ -243,20 +252,21 @@ if __name__== "__main__":
     robot_control = Drive([0,0,np.pi/2])
     try:
         while(True):
-
-            robot_control.wheelCalibration_turning(1550,1)
+            robot_control.drive_deg(90,1)
             print("turning 90degs left\n")
             time.sleep(0.5)
 
-            robot_control.wheelCalibration_forward(3600)
+            robot_control.drive_dis(0.4)
+            #robot_control.wheelCalibration_forward(3600)
             print("40cm forward \n")
             time.sleep(0.5)
-
-            robot_control.wheelCalibration_turning(1550,0)
+            robot_control.drive_deg(90,0)
+            #robot_control.wheelCalibration_turning(1550,0)
             print("turning 90degs right\n")
             time.sleep(0.5)
 
-            robot_control.wheelCalibration_forward(7200)
+            robot_control.drive_dis(0.8)
+            #robot_control.wheelCalibration_forward(7200)
             print("80cm forward \n")
             time.sleep(0.5)
 
