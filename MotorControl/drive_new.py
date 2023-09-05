@@ -155,5 +155,7 @@ class Drive:
 
 if __name__== "__main__":
     robot_control = Drive([0,0,0])
+    print("Start Pose: ", robot_control.get_pose())
     robot_control.drive_to_point(100,100, None)
-    print(robot_control.get_pose())
+    print("Drive to (100,100) - Pose: ", robot_control.get_pose())
+    robot_control.drive_to_point()
