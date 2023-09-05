@@ -23,7 +23,7 @@ class Drive:
 
         self.wheel_radius = 0.0524 * 1000  # Metres
         self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in metres
-        self.speed = 50 # 1. reduce current speed to 50
+        self.speed = 45 # 1. reduce current speed to 50
         self.pose = pose
 
 
@@ -69,6 +69,8 @@ class Drive:
         else:
             self.pose[2] -= sum_ticks * self.distance_per_tick / self.turn_radius
 
+# Forward Testing results:
+# 1m = 9000
         
     def drive_forward(self, distance):
         """Drives robot forward by distance"""
@@ -134,19 +136,47 @@ class Drive:
         self.right_encoder.reset_count()
 
     def wheelCalibration_forward(self,ticks):
-        self.right_motor.set_speed(self.speed)
+        self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
         self.left_motor.set_speed(self.speed)
         left_ticks = self.left_encoder.count
         right_ticks = self.right_encoder.count
         print("Initial left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
 
         while (left_ticks<ticks or right_ticks <ticks):
+            if(left_ticks>ticks):
+                self.left_motor.stop()
+            if(right_ticks>ticks):
+                self.right_motor.stop()
             left_ticks = self.left_encoder.count
             right_ticks = self.right_encoder.count
             print("Cur left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
         
         self.stops_by_speed()
-            
+        self.reset_encoders()
+    
+    def wheelCalibration_turning(self,ticks,left_right):
+        if(left_right==1):
+
+            self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
+            self.left_motor.set_speed(-self.speed)
+        else:
+            self.right_motor.set_speed(-self.speed-2.5) # Adjust the speed of right motor (motor speed uncertainty)
+            self.left_motor.set_speed(self.speed)
+        left_ticks = self.left_encoder.count
+        right_ticks = self.right_encoder.count
+        print("Initial left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
+
+        while (abs(left_ticks)<ticks or abs(right_ticks) <ticks):
+            if(left_ticks>ticks):
+                self.left_motor.stop()
+            if(right_ticks>ticks):
+                self.right_motor.stop()
+            left_ticks = self.left_encoder.count
+            right_ticks = self.right_encoder.count
+            print("Cur left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
+        
+        self.stops_by_speed()
+        self.reset_encoders()
         
     def control(self, num_ticks, left_speed, right_speed):
         """Drives motors for num_ticks at speed, with PID tuning"""
@@ -204,12 +234,33 @@ class Drive:
     def clean(self):
         GPIO.cleanup()
 
+# Forward Testing results:
+# 1m = 9000
+# 1550 = 90deg
+# 1 == left 0 == right
 if __name__== "__main__":
 
     robot_control = Drive([0,0,np.pi/2])
     try:
-        robot_control.wheelCalibration_forward(1000)
-        input("check")
+        while(True):
+
+            robot_control.wheelCalibration_turning(1550,1)
+            print("turning 90degs left\n")
+            time.sleep(0.5)
+
+            robot_control.wheelCalibration_forward(3600)
+            print("40cm forward \n")
+            time.sleep(0.5)
+
+            robot_control.wheelCalibration_turning(1550,0)
+            print("turning 90degs right\n")
+            time.sleep(0.5)
+
+            robot_control.wheelCalibration_forward(7200)
+            print("80cm forward \n")
+            time.sleep(0.5)
+
+            input("check")
         # moving calibration
 
 
