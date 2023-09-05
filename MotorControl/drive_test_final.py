@@ -135,6 +135,12 @@ class Drive:
         self.left_encoder.reset_count()
         self.right_encoder.reset_count()
 
+    def degrees_to_range(self,degrees):
+        degrees = degrees % 360  # type: ignore # Ensure degrees are within 0 to 359
+        if degrees > 180:
+            degrees -= 360  # Convert to the range -180 to +179
+        return degrees
+
     def drive_forward_tick(self,ticks):
         self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
         self.left_motor.set_speed(self.speed)
@@ -156,10 +162,11 @@ class Drive:
     
     def drive_turn_tick(self,ticks,left_right):
         if(left_right==1):
-
+            # LEFT
             self.right_motor.set_speed(self.speed+2.5) # Adjust the speed of right motor (motor speed uncertainty)
             self.left_motor.set_speed(-self.speed)
         else:
+            # RIGHT
             self.right_motor.set_speed(-self.speed-2.5) # Adjust the speed of right motor (motor speed uncertainty)
             self.left_motor.set_speed(self.speed)
         left_ticks = self.left_encoder.count
@@ -186,7 +193,12 @@ class Drive:
 
     def drive_deg(self, deg,right_left):
         deg = 1550 * deg/90 
-        self.drive_turn_tick(deg,right_left)
+        right_left = 1 # left
+        if(deg>0):
+            right_left = 0 # right
+        self.drive_turn_tick(abs(deg),right_left)
+
+
     def control(self, num_ticks, left_speed, right_speed):
         """Drives motors for num_ticks at speed, with PID tuning"""
         left_ticks = self.left_encoder.count
@@ -210,32 +222,51 @@ class Drive:
             self.left_motor.set_speed(left_speed)
             self.update_total_ticks()
 
+    # Logic:
+    # Check if robot need to turn
+    # turn first
+    # Then forward
+
     def drive_to_point(self, x, y, theta_end=None):
         """Drives robot to point (x, y)"""
         dx = x - self.pose[0]
         dy = y - self.pose[1]
-        
-        theta = math.atan2(dy, dx) # the angle between cur_poos to des
-        print("cal check : ", "dx:  ", dx, "dy: " , dy, "theta : ", theta)
+ 
+        #theta = math.atan2(dy, dx) 
+        # # the angle between cur_poos to des
+        theta = math.degrees(math.atan2(dy, dx))
+        print("\n initial check : ", "dx:  ", dx, "dy: " , dy, "theta : ", theta)
+        print("\n curent robot orientation: ", self.pose[2])
+        rot_deg = self.pose[2] - theta
+        print("\n rot deg: ", rot_deg)
+        rot_deg = self.degrees_to_range(rot_deg)
+        print("\n after adj : ", rot_deg)
+
+
         print("=====Start Turn=====")
-        print("===Theta===: ", theta)
-        
+        # if theta is positive: 
+        # robot need to rotate right
+        # ~ ~ negative
+        # ~ ~ left
+        print("===Theta===: ", rot_deg)
+        self.drive_deg(rot_deg,None)
+
         input("check")
         time.sleep(2)
-        if abs(theta) > np.pi/16:
-            self.turn(theta)
+
         distance = math.sqrt(dx**2 + dy**2)
-        if distance == 0:
+        if distance < 0.02:
             print("At Point")
             return
+        print("going straight: ", distance)
         input("Check")
-        time.sleep(0.1)
-        self.drive_forward(distance)
-        if theta_end is not None:
-            # Difference in angle between current and desired
-            theta_diff = theta_end - self.pose[2]
-            if theta_diff > np.pi/16:
-                self.turn(theta_diff)
+
+        self.drive_dis(distance)
+        # if theta_end is not None:
+        #     # Difference in angle between current and desired
+        #     theta_diff = theta_end - self.pose[2]
+        #     if theta_diff > np.pi/16:
+        #         self.turn(theta_diff)
 
     def get_pose(self):
         return self.pose
@@ -249,9 +280,12 @@ class Drive:
 # 1 == left 0 == right
 if __name__== "__main__":
 
-    robot_control = Drive([0,0,np.pi/2])
+    robot_control = Drive([0,0,90])
     try:
         while(True): 
+
+            robot_control.drive_to_point(1,1)
+            input("drive tes")
             robot_control.drive_deg(90,1)
             print("turning 90degs left\n")
             time.sleep(0.5)
