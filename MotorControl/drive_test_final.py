@@ -191,13 +191,16 @@ class Drive:
         ticks_forward = round(distance*9000)
         self.drive_forward_tick(ticks_forward)
 
+
     def drive_deg(self, deg,right_left):
         deg = 1550 * deg/90 
         right_left = 1 # left
         if(deg>0):
             right_left = 0 # right
         self.drive_turn_tick(abs(deg),right_left)
-
+        self.pose[2] += deg
+        self.pose[2]  = self.degrees_to_range(self.pose[2]) # convert to accurate range
+        print("Cur _ pose check : ", self.pose)
 
     def control(self, num_ticks, left_speed, right_speed):
         """Drives motors for num_ticks at speed, with PID tuning"""
@@ -262,11 +265,18 @@ class Drive:
         input("Check")
 
         self.drive_dis(distance)
+        self.pose[:2] = [x,y]
         # if theta_end is not None:
         #     # Difference in angle between current and desired
         #     theta_diff = theta_end - self.pose[2]
         #     if theta_diff > np.pi/16:
         #         self.turn(theta_diff)
+
+
+    def drive_to_waypoints(self, waypoints:list):
+        for waypoint in waypoints:
+            self.drive_to_point(waypoint[0],waypoint[1]) # TODO: can change the theta end
+
 
     def get_pose(self):
         return self.pose
