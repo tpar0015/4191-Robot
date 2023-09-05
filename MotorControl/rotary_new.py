@@ -1,6 +1,10 @@
 # Provides functions to stop motors depending on rotary encoder output
 import time
+import sys
+sys.path.append("/home/tom/4191-Robot/")
 import RPi.GPIO as GPIO
+from pins import PINS
+
 pin_rotary_a = 20    #? change later
 pin_rotary_b = 21
 
@@ -44,6 +48,7 @@ class RotaryEncoder:
             # #         self.count += 1
 
         self.state = (a_state, b_state)
+        print(self.count)
 
     def wheel_velocity(self, radius):
         """Returns wheel velocity"""
@@ -69,5 +74,9 @@ class RotaryEncoder:
         GPIO.remove_event_detect(self.pin_b)
         GPIO.cleanup()
 
+if __name__ == "__main__":
+    right_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
+    left_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"] )
+    time.sleep(50)
 
             

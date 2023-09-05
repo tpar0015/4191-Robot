@@ -57,14 +57,14 @@ class Robot_Controller():
         # self.led = ledCRL() # If not used in ultrasonic already
 
         # Initialise map
-        start_pose = [50, 50, 0]
+        start_pose = [50, 50, np.pi/2]
         self.map = Map((1200,1200), 50, start_pose)
         self.map.generate_map()
         self.pose = start_pose
         # Initialise robot
-        self.Control = Drive(start_pose, self.drive_queue)
+        self.Control = Drive(start_pose, [0,0,0], [0,0,0], self.drive_queue)
         
-        # Initialize Ultrasonic
+        # Initialize Ultrasonic]
         self.ultrasonic_proc = multiprocessing.Process(target=self.run_ultrasonic, args=())
         self.ultrasonic_proc.start()
         self.detect_distance = 150   # mm    
@@ -90,10 +90,9 @@ class Robot_Controller():
         # Calculate path
         self.map.update_path(waypoint)
         path = self.map.get_path_xy()
-        print(path)
         maps = [self.map]
         # Drive to each node
-        node_idx = 0
+        node_idx = 1
         while node_idx < len(path):
             pose_val = self.get_queue(self.drive_queue)
             pose = pose_val if pose_val is not None else self.pose
@@ -101,17 +100,17 @@ class Robot_Controller():
             self.map.update_location(pose)
 
             ultrasonic_readout = self.get_queue(self.ultrasonic_queue)
-            if ultrasonic_readout is not None:            
-                remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
-            else:
-                remapped_bool = False
-            if remapped_bool:
-                print("Remapped")
-                path = self.map.get_path_xy()    # Updates path
-                node_idx = 0
-                # For testing
-                maps.append(self.map)
-                continue    # Skips rest of iteration
+            # if ultrasonic_readout is not None:            
+            #     remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
+            # else:
+            #     remapped_bool = False
+            # if remapped_bool:
+            #     print("Remapped")
+            #     path = self.map.get_path_xy()    # Updates path
+            #     node_idx = 1
+            #     # For testing
+            #     maps.append(self.map)
+            #     continue    # Skips rest of iteration
 
             x,y = path[node_idx]
             theta_end = 0
@@ -128,8 +127,6 @@ class Robot_Controller():
     def terminate_processes(self):
         self.Control.left_motor.stop()
         self.Control.right_motor.stop()
-        self.Control.left_encoder.reset_count()
-        self.Control.right_encoder.reset_count()
         self.ultrasonic_proc.terminate()
         self.ultrasonic_proc.join()
         if self.drive_proc is not None:
@@ -144,7 +141,7 @@ if __name__ == "__main__":
     Robot = Robot_Controller()
     maps = [Robot.map]
     try:
-        Robot.drive_to_waypoint((500,500))
+        Robot.drive_to_waypoint((300,100))
         pass
     except KeyboardInterrupt:
         Robot.terminate_processes()
