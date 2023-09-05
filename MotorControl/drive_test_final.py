@@ -284,7 +284,7 @@ if __name__== "__main__":
     try:
         while(True): 
 
-            robot_control.drive_to_point(1,1)
+            robot_control.drive_to_point(-0.4,-0.4)
             input("drive tes")
             robot_control.drive_deg(90,1)
             print("turning 90degs left\n")
