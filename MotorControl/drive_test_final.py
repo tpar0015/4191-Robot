@@ -8,7 +8,7 @@ sys.path.append("/home/tom/4191-Robot/")
 from MotorControl.rotary_new import RotaryEncoder
 from MotorControl.motorctl_new import Motor
 from pins import *
-
+from multiprocessing import Queue
 class Drive:
     def __init__(self, pose):
         self.right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"]) # 设置 motor
@@ -23,7 +23,7 @@ class Drive:
 
         self.wheel_radius = 0.0524 * 1000  # Metres
         self.distance_per_tick = (self.wheel_radius * 2 * math.pi) / (74.83 * 48)  # Distance per tick in metres
-        self.speed = 50 # 1. reduce current speed to 50
+        self.speed = 100
         self.pose = pose
 
 
@@ -133,31 +133,16 @@ class Drive:
         self.left_encoder.reset_count()
         self.right_encoder.reset_count()
 
-    def wheelCalibration_forward(self,ticks):
-        self.right_motor.set_speed(self.speed)
-        self.left_motor.set_speed(self.speed)
-        left_ticks = self.left_encoder.count
-        right_ticks = self.right_encoder.count
-        print("Initial left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
-
-        while (left_ticks<ticks or right_ticks <ticks):
-            left_ticks = self.left_encoder.count
-            right_ticks = self.right_encoder.count
-            print("Cur left ticks: ", left_ticks, " right ticks", right_ticks,"\n")
-        
-        self.stops_by_speed()
-            
-        
     def control(self, num_ticks, left_speed, right_speed):
         """Drives motors for num_ticks at speed, with PID tuning"""
         left_ticks = self.left_encoder.count
         right_ticks = self.right_encoder.count
         print("===Control===")
         print(f"left_ticks: {left_ticks}, right_ticks: {right_ticks}")
-
+        time.sleep(2)
         print("Number of Ticks: ", num_ticks)
         print("Starting...")
-
+        time.sleep(1)
         
 
         total_ticks_start = self.get_total_ticks()
@@ -208,9 +193,6 @@ if __name__== "__main__":
 
     robot_control = Drive([0,0,np.pi/2])
     try:
-        robot_control.wheelCalibration_forward(100)
-        input("check")
-        # moving calibration
 
 
         theta = -np.pi
