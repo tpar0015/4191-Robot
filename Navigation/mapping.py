@@ -7,7 +7,9 @@ Date Modified: 2023-08-23
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from graph import Graph, Node
+import sys
+sys.path.append("/home/tom/4191-Robot")
+from Navigation.graph import Graph, Node
 from math import comb
 # Recieve position from rotary encoders
 # Recieve readouts from ultrasonic sensor
@@ -60,14 +62,14 @@ class Map:
             for j in i:
                 self.G.add_node(j)
 
-    def update_location(self, encoder_readout):
+    def update_location(self, pose) -> None:
         """
         Updates predicted location on nodal map
         """
-        self.location = encoder_readout
+        self.location = pose
 
 
-    def remap(self, ultrasonic_readout, object_size):
+    def remap(self, ultrasonic_readout, object_size) -> None:
         """
         Re calibrates map with object blocked out on nodes.
         """
@@ -82,13 +84,17 @@ class Map:
         for node in obstacle_nodes:
             self.G.set_obstacle(node)
 
-    def update_path(self, end_node):
+    def update_path(self, waypoint) -> None:
         """
         Updates path to avoid any new obstacles
         """
         start_node = self.G.get_nearest_node(self.location[:2])
-        self.G.djikstras(start_node, end_node)
-        _, self.path = self.G.get_shortest_distance(end_node)
+        end_node = self.G.get_nearest_node(waypoint[:2])
+        if end_node is not None:
+            self.G.djikstras(start_node, end_node)
+            _, self.path = self.G.get_shortest_distance(end_node)
+        else:
+            print("Cant find waypoint.")
 
     def get_path_xy(self) -> list:
         """
@@ -98,6 +104,17 @@ class Map:
         for node in self.path:
             path_xy.append(self.G[eval(node)].xy)
         return path_xy
+
+    def check_obstacle(self, ultrasonic_readout: float, detect_distance) -> bool:
+        """Checks if ultrasonic readout detected obstacle, if so remaps and updates path"""
+
+        if ultrasonic_readout < detect_distance:
+            self.remap(ultrasonic_readout, 250)
+            self.update_path
+            return True
+        else:
+            return False
+
 
     def bezier_curve(self, t):
         """
@@ -199,7 +216,8 @@ class Map:
 if __name__ == '__main__':
     map_test = Map((1000, 1000), 50, loc=(500,0,np.pi/6))
     map_test.generate_map()
-    end_node = map_test.G.get_nearest_node((900, 950))
+    end_node_xy = (900, 950)
+    end_node = map_test.G.get_nearest_node(end_node_xy)
     map_test.remap(150, 150)
-    map_test.update_path(end_node)
+    map_test.update_path(end_node_xy)
     map_test.draw_arena(draw_path=True)

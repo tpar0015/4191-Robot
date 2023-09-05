@@ -1,16 +1,16 @@
 PINS = {
-    "motor1_en": 12,
-    "motor1_a": 16,
-    "motor1_b": 18,
-    "motor2_en": 22,
-    "motor2_a": 24,
-    "motor2_b": 26,
+    "motor1_en": 10,  # Right Motor
+    "motor1_a": 24,
+    "motor1_b": 23,
+    "motor2_en":26,
+    "motor2_a": 16,    # Left Motor
+    "motor2_b": 12,
 
-    "encoder1_a": 7,
-    "encoder1_b": 11,
-    "encoder2_a": 13,
-    "encoder2_b": 15,
+    "encoder1_a": 17,    # Right Encoder
+    "encoder1_b": 27,
+    "encoder2_a": 22,   # Left Encoder
+    "encoder2_b": 25,
     
-    "sonar_trig": 8,
-    "sonar_echo": 10,
+    "sonar_trig": 18,
+    "sonar_echo": 15,
 }

@@ -32,11 +32,11 @@ def ceiling_base_localization(image_1, image_2, camera_matrix):
     # Estimate homography using opencv - 
     H, mask = cv2.findHomography(X1, X2, cv2.RANSAC, 1.0)
 
-    translation_matrix = np.matmul(np.linalg.inv(camera_matrix), H)
+    # translation_matrix = np.matmul(np.linalg.inv(camera_matrix), H)
 
-    rotation = np.arctan2(translation_matrix[0,1],translation_matrix[0,0])*180/np.pi
-    x_translation = translation_matrix[0,2]
-    y_translation = translation_matrix[1,2]
+    rotation = np.arctan2(H[0,1],H[0,0])*180/np.pi
+    x_translation = H[0,2]
+    y_translation = H[1,2]
 
 # need to convert pixel to meter (measure the length of one ceiling tile and the number of pixel for one tile)
     return x_translation, y_translation, rotation
