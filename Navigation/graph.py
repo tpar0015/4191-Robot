@@ -51,6 +51,15 @@ class Graph:
         x2, y2 = pos2
         return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
+    def distance_x(self, x1, x2):
+        return abs(x1 - x2)
+
+    def reset_graph(self):
+        for node in self.nodes:
+            self.nodes[node].visited = False
+            self.nodes[node].prev_node = None
+            self.nodes[node].distance = float('inf')
+
     def get_nearest_node(self, pos):
         """get_nearest_node: Takes in a (x,y) position, returns nearest node on map"""
         min_dist = float('inf')
@@ -65,19 +74,20 @@ class Graph:
 
         return min_node
 
-    def adjacent_nodes(self, node, radius) -> list:
+    def adjacent_nodes(self, node, object_size) -> list:
         """adjacent_nodes:  returns surrounding nodes within a radius"""
-
-        def recursive_nodes(node, radius, pos, memo) -> None:
+        def recursive_nodes(node, object_size, pos, memo) -> None:
+            x_radius = object_size[0]/2
+            y_radius = object_size[1]/2
             for neighbour,_ in node.neighbours:
                 memo.append(node)
-                if self.distance(pos, neighbour.xy) < radius and neighbour not in memo:
-                    recursive_nodes(neighbour, radius, pos, memo)
-                else:
-                    return
+                # If node.x is within x_radius, and node.y is within y_radius 
+                # if self.distance_x(neighbour.xy[0], pos[0]) < x_radius and self.distance_x(neighbour.xy[1], pos[1]) < y_radius and neighbour not in memo:
+                if self.distance(neighbour.xy, pos) < math.hypot(x_radius,y_radius) and neighbour not in memo:
+                    recursive_nodes(neighbour, object_size, pos, memo)
 
         memo = []
-        recursive_nodes(node, radius, node.xy, memo)
+        recursive_nodes(node, object_size, node.xy, memo)
         return memo
 
     def set_obstacle(self, node) -> None:
@@ -108,7 +118,7 @@ class Graph:
             current_node.visited = True
 
             for neighbour,  weight in current_node.neighbours:
-                if not neighbour.visited:
+                if not neighbour.visited and not neighbour.is_obstacle:
                     new_distance = current_distance + weight
                     if new_distance < neighbour.distance:
                         neighbour.distance = new_distance
@@ -155,7 +165,6 @@ if __name__ == '__main__':
 
     start_node = nodes[1][1]
     target_node = nodes[2][2]
-    #G.djikstras(start_node, target_node)
-    #path_test, dist = G.get_shortest_distance(target_node)
-    #print(path_test, dist)
-    print(G[0, 0])
+    G.djikstras(start_node, target_node)
+    path_test, dist = G.get_shortest_distance(target_node)
+    print(path_test, dist)

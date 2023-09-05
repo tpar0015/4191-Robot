@@ -26,6 +26,8 @@ class Map:
         self.G = Graph()
         self.location = loc
         self.path = []
+        self.object_size = (250,90)
+        self.obstacle_corners = []
 
     def generate_map(self):
         """
@@ -69,18 +71,26 @@ class Map:
         self.location = pose
 
 
-    def remap(self, ultrasonic_readout, object_size) -> None:
+    def remap(self, ultrasonic_readout, object_size: tuple) -> None:
         """
         Re calibrates map with object blocked out on nodes.
         """
         x, y, th = self.location
-
-        obs_x = x + 2*ultrasonic_readout * np.cos(th)
-        obs_y = y + 2*ultrasonic_readout * np.sin(th)
-
+        obs_x = x + object_size[0]/2 * np.cos(th) + 2*ultrasonic_readout * np.cos(th)
+        obs_y = y + object_size[1]/2 * np.sin(th) + 2*ultrasonic_readout * np.sin(th)
+        self.G.reset_graph()
         closest_node = self.G.get_nearest_node((obs_x, obs_y))
         obstacle_nodes = self.G.adjacent_nodes(closest_node, object_size)
+        obstacle_xy = []
+        for node in obstacle_nodes:
+            obstacle_xy.append(node.xy)
+        corners = [(min([x[0] for x in obstacle_xy]) - self.radius, min([x[1] for x in obstacle_xy]) - self.radius),
+                    (min([x[0] for x in obstacle_xy]) - self.radius, max([x[1] for x in obstacle_xy]) + self.radius),
+                    (max([x[0] for x in obstacle_xy]) + self.radius, min([x[1] for x in obstacle_xy]) - self.radius),
+                    (max([x[0] for x in obstacle_xy]) + self.radius, max([x[1] for x in obstacle_xy]) + self.radius),
+                    ]
 
+        self.obstacle_corners.append(corners)
         for node in obstacle_nodes:
             self.G.set_obstacle(node)
 
@@ -109,13 +119,44 @@ class Map:
         """Checks if ultrasonic readout detected obstacle, if so remaps and updates path"""
 
         if ultrasonic_readout < detect_distance:
-            self.remap(ultrasonic_readout, 250)
+            self.remap(ultrasonic_readout, self.object_size)
             self.update_path
             return True
         else:
             return False
+    def ccw(self, A, B, C):
+        """ccw: Returns true if points are in counter clockwise order"""
+        return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
+    def line_intersect(self, A, B, C, D):
+        """line_intersect: Returns true if line segments AB and CD intersect"""
+        return self.ccw(A,C,D) != self.ccw(B,C,D) and self.ccw(A,B,C) != self.ccw(A,B,D)
+    def line_obstacle_free(self, A, B):
+        """
+        line_obstacle_free: Returns true if line segment AB is obstacle free
+        """
+        for corner in self.obstacle_corners:
+            if self.line_intersect(A.xy, B.xy, corner[0], corner[1]) or self.line_intersect(A.xy, B.xy, corner[0], corner[2]) or self.line_intersect(A.xy, B.xy, corner[1], corner[3]) or self.line_intersect(A.xy, B.xy, corner[2], corner[3]):
+                return False
+        return True
 
+    def shorten_shortest_path(self) -> None:
+        """
+        Shortens path by removing nodes that are not needed.
+        """
+        start_node = self.G[eval(self.path[0])]
+        i = 1
+        while i < len(self.path) - 1:
+            current_node = self.G[eval(self.path[i])]
+            
+            # Check if line between start and current node is obstacle free
+            if self.line_obstacle_free(start_node, current_node):
+                self.path.pop(i)
 
+            else:
+                start_node = current_node
+                i += 1
+                
+            
     def bezier_curve(self, t):
         """
         Returns bezier curve of path
@@ -147,18 +188,22 @@ class Map:
             for edge in node.neighbours:
                 G_img.add_edge(node.name, edge[0].name)
 
-    
+        node_idx = 0
+        while node_idx < len(self.path) - 1:
+            G_img.add_edge(self.path[node_idx], self.path[node_idx + 1])
+            node_idx += 1
+
 
         # Draw Bezier
-        t = np.linspace(0, 1, 100)
-        x_vals = []
-        y_vals = []
-        for i in t:
-            x, y = self.bezier_curve(i)
-            x_vals.append(x)
-            y_vals.append(y)
+        # t = np.linspace(0, 1, 100)
+        # x_vals = []
+        # y_vals = []
+        # for i in t:
+        #     x, y = self.bezier_curve(i)
+        #     x_vals.append(x)
+        #     y_vals.append(y)
 
-        plt.plot(x_vals, y_vals, 'r--')
+        # plt.plot(x_vals, y_vals, 'r--')
         # Draw boundary
         max_x = self.arena_dimensions[0]
         max_y = self.arena_dimensions[1]
@@ -211,13 +256,18 @@ class Map:
         nx.draw(G_img, pos=node_positions, node_size=node_sizes, with_labels=False, node_color=node_colors, edge_color=edge_colors, width=edge_width)
 
         plt.show()
+        
 
 
 if __name__ == '__main__':
-    map_test = Map((1000, 1000), 50, loc=(500,0,np.pi/6))
+    map_test = Map((1000, 1000), 50, loc=(500,50,np.pi/2))
     map_test.generate_map()
-    end_node_xy = (900, 950)
+    end_node_xy = (1000, 1000)
     end_node = map_test.G.get_nearest_node(end_node_xy)
-    map_test.remap(150, 150)
     map_test.update_path(end_node_xy)
+    path = map_test.get_path_xy()
+    map_test.draw_arena()
+    map_test.remap(100,(350, 200))
+    map_test.update_path(end_node_xy)
+    map_test.shorten_shortest_path()
     map_test.draw_arena(draw_path=True)
