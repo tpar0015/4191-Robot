@@ -19,11 +19,11 @@ class Electromagnet:
 
         self.pwm = GPIO.PWM(gpio_pin, frequency)
     
-    def set_cycle(self):
+    def set_cycle(self,duty_cycle):
         self.pwm.ChangeDutyCycle(duty_cycle)
     
     def turn_on(self):
-        self.pwm.start(self.duty_cycle)
+        GPIO.output(self.gpio_pin, GPIO.HIGH)
 
     def clean_up(self):
         self.pwm.stop()
@@ -32,7 +32,7 @@ class Electromagnet:
         
 if __name__ == "__main__":
     gpio_pin = 12
-    frequency = 1000  
+    frequency = 100
     duty_cycle = 50 
 
     electromagnet = Electromagnet(gpio_pin, frequency, duty_cycle)
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     try:
         while True:
             try:
+                electromagnet.turn_on()
                 duty_cycle = float(input("Enter duty cycle (0 to 100): "))
                 electromagnet.set_cycle(duty_cycle)
             except ValueError:
