@@ -22,13 +22,17 @@ class Electromagnet:
     def turn_on(self):
         "Toggles on"
         GPIO.output(self.gpio_pin, GPIO.HIGH)
+        time.sleep(1)
     
     def turn_off(self):
         "Toggles off"
         GPIO.output(self.gpio_pin, GPIO.LOW)
+        self.pwm.start(0)
+        self.pwm.stop(0)
 
     def pwm_on(self):
         "Turn on PWM"
+        GPIO.output(self.gpio_pin, GPIO.LOW)
         self.pwm.start()
 
     def set_cycle(self,duty_cycle):
@@ -36,13 +40,14 @@ class Electromagnet:
         self.pwm.ChangeDutyCycle(duty_cycle)
 
     def clean_up(self):
+        GPIO.output(self.gpio_pin, GPIO.LOW)
         self.pwm.stop()
         GPIO.cleanup()
         
         
 if __name__ == "__main__":
     gpio_pin = 12
-    frequency = 100
+    frequency = 10000
     duty_cycle = 50 
 
     electromagnet = Electromagnet(gpio_pin, frequency, duty_cycle)
