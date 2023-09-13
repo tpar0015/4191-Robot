@@ -9,7 +9,7 @@ class Electromagnet:
     Class module to control the electromagnet
     Functions include: Toggling the electromagnet, increasing or decreasing the strength of the electromagnet
     """
-    def __init__(self, gpio_pin=12, frequency=1000, duty_cycle=50):
+    def __init__(self, gpio_pin=12, frequency=100, duty_cycle=50):
         self.gpio_pin = gpio_pin #PINS["electromagnet"]
         self.frequency = frequency
         self.duty_cycle = duty_cycle
@@ -19,11 +19,21 @@ class Electromagnet:
 
         self.pwm = GPIO.PWM(gpio_pin, frequency)
     
-    def set_cycle(self,duty_cycle):
-        self.pwm.ChangeDutyCycle(duty_cycle)
-    
     def turn_on(self):
+        "Toggles on"
         GPIO.output(self.gpio_pin, GPIO.HIGH)
+    
+    def turn_off(self):
+        "Toggles off"
+        GPIO.output(self.gpio_pin, GPIO.LOW)
+
+    def pwm_on(self):
+        "Turn on PWM"
+        self.pwm.start()
+
+    def set_cycle(self,duty_cycle):
+        "Configure duty cycle of PWM"
+        self.pwm.ChangeDutyCycle(duty_cycle)
 
     def clean_up(self):
         self.pwm.stop()
@@ -40,9 +50,13 @@ if __name__ == "__main__":
     try:
         while True:
             try:
-                electromagnet.turn_on()
-                duty_cycle = float(input("Enter duty cycle (0 to 100): "))
-                electromagnet.set_cycle(duty_cycle)
+                toggle = input("on/off: ")
+                if toggle == "on":
+                    electromagnet.turn_on()
+                else:
+                    electromagnet.turn_off()
+                #duty_cycle = float(input("Enter duty cycle (0 to 100): "))
+                #electromagnet.set_cycle(duty_cycle)
             except ValueError:
                 pass
     except KeyboardInterrupt:
