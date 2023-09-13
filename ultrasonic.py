@@ -87,7 +87,8 @@ class Ultrasonic:
 
 
 if __name__ == "__main__":
-    sensor = Ultrasonic()
+    test_queue = Queue()
+    sensor = Ultrasonic(test_queue)
     sensor.setup()
 
     try:

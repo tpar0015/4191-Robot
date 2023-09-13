@@ -23,7 +23,7 @@ import sys
 import numpy as np
 
 # Driving
-from MotorControl.drive_new import Drive
+from MotorControl.drive_test_final import Drive
 # Sensors
 from ultrasonic import Ultrasonic
 # from camera import capture
@@ -45,7 +45,7 @@ import ast
 
 
 class Robot_Controller():
-    def __init__(self):
+    def __init__(self, start_pose):
         GPIO.setmode(GPIO.BCM)
         # Initialize Queues
         self.ultrasonic_queue = Queue()
@@ -57,12 +57,11 @@ class Robot_Controller():
         # self.led = ledCRL() # If not used in ultrasonic already
 
         # Initialise map
-        start_pose = [50, 50, np.pi/2]
         self.map = Map((1200,1200), 50, start_pose)
         self.map.generate_map()
         self.pose = start_pose
         # Initialise robot
-        self.Control = Drive(start_pose, [0,0,0], [0,0,0], self.drive_queue)
+        self.Control = Drive(self.pose,self.ultrasonic_queue)
         
         # Initialize Ultrasonic]
         self.ultrasonic_proc = multiprocessing.Process(target=self.run_ultrasonic, args=())
@@ -78,7 +77,7 @@ class Robot_Controller():
         ultrasonic.loop()
     
     def drive(self, x, y, theta_end):
-        self.Control.drive_to_point(x,y, theta_end)
+        self.Control.drive_to_point(x, y, theta_end)
 
     def get_queue(self, queue):
         if queue.empty():
@@ -90,30 +89,33 @@ class Robot_Controller():
         # Calculate path
         self.map.update_path(waypoint)
         path = self.map.get_path_xy()
+        input('Check')
         maps = [self.map]
         # Drive to each node
         node_idx = 1
         while node_idx < len(path):
-            pose_val = self.get_queue(self.drive_queue)
-            pose = pose_val if pose_val is not None else self.pose
+            pose = self.pose
             # Updates location
             self.map.update_location(pose)
 
             ultrasonic_readout = self.get_queue(self.ultrasonic_queue)
-            # if ultrasonic_readout is not None:            
-            #     remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
-            # else:
-            #     remapped_bool = False
-            # if remapped_bool:
-            #     print("Remapped")
-            #     path = self.map.get_path_xy()    # Updates path
-            #     node_idx = 1
-            #     # For testing
-            #     maps.append(self.map)
-            #     continue    # Skips rest of iteration
+            if ultrasonic_readout is not None:            
+                remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
+            else:
+                remapped_bool = False
+            if remapped_bool:
+                print("Remapped")
+                self.Control.stops_by_speed()
+                path = self.map.get_path_xy()    # Updates path
+                node_idx = 1
+                # For testing
+                maps.append(self.map)
+                continue    # Skips rest of iteration
 
             x,y = path[node_idx]
-            theta_end = 0
+            print("x,y", x,y)
+            input('')
+            theta_end = None
             self.drive(x, y, theta_end)
             self.pose = self.Control.get_pose()
             print(f"Arrived at Node: {path[node_idx]}, Current Position: {pose}")
@@ -138,82 +140,20 @@ class Robot_Controller():
 # Ultrasonic
 
 if __name__ == "__main__":
-    Robot = Robot_Controller()
+    start_pose = [50, 50, np.pi/2]
+    Robot = Robot_Controller(start_pose)
     maps = [Robot.map]
+    Robot.drive_to_waypoint((50, 800))
+    # Robot.Control.drive_to_point(900,800)
     try:
-        Robot.drive_to_waypoint((300,100))
-        pass
+        # Robot.multiple_waypoints(waypoints)
+       pass 
     except KeyboardInterrupt:
         Robot.terminate_processes()
+        GPIO.cleanup()
     for map in maps:
         print(map.get_path_xy())
         map.draw_arena(draw_path=True)
-    # # Initialise args
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--wayp0", type=str, default='[-1,-1]')
-    # parser.add_argument("--wayp1", type=str, default='[-1,-1]')
-    # parser.add_argument("--wayp2", type=str, default='[-1,-1]')
-    # parser.add_argument("--pose", type=str, default='[-1,-1,-1]')
-    # args, _ = parser.parse_known_args()
-
-    # # Initial positions absolute (in cm (x,y))
-    # # If no inputs, using sample arena waypoints, change for final pls
-    # if args.wayp0 == '[-1,-1]' or args.wayp1 == '[-1,-1]' or args.wayp0 == '[-1,-1]':
-    #     wayp_0 = [30, 20]
-    #     wayp_1 = [90, 80]
-    #     wayp_2 = [30, 80]
-    # else:
-    #     wayp_0 = ast.literal_eval(args.wayp0)
-    #     wayp_1 = ast.literal_eval(args.wayp1)
-    #     wayp_2 = ast.literal_eval(args.wayp2)
-
-    # if args.pose == '[-1,-1,-1]':
-    #     robot_pose = [30, 20, 0] # x, y, pose
-    # else:
-    #     robot_pose = ast.literal_eval(args.pose)
-
-    # wayp_all = [wayp_0, wayp_1, wayp_2]
-    # ################################################################################
-    # #arr1 = Array('i', range(10))
-    # #proc1 = Process(target=function, args=(arr1,))
-    # #proc1.start()
-    # #proc1.join()
-    # #multiprocessing.Process(target=drive_to_waypoint, args=())
-    # # Move to waypoints
-    # for curr in range(len(wayp_all)):
-    #     """
-    #     Sample robot procedure:
-    #     1. Detect obstacles
-    #     2. Path planning
-    #     3. Robot movement
-    #     """
-    #     ## Detect obstacles to update map
-
-    #     # TODO Use ultrasonic sensor to update map
-    #     ## Path Planning
-    #     map.update_path(wayp_all[curr])
-    #     path = map.get_path_xy()
-    #     #shared_array = multiprocessing.Array('i', array_size)
-
-    #     # Take a picture with camera and save it
-    #     # TODO Potential replace camera taking with real-time
-    #     # camera_proc = multiprocessing.Process(target=capture, args=(1,"data/scene.jpg"))
-    #     # camera_proc.start()
-    #     # camera_proc.join()
-
-
-        ###  Main Loop 
-
-        ## Robot movement
-        # Move to target waypoint
-        # speed = 1
-        # angle = robot_pose[2]
-        # position = [robot_pose[0],robot_pose[1]]
-        # waypoints = [start_node, target_node]
-
-        # drive_proc.join() # Wait for drive process to finish
-        # # Wait 10 seconds at/near waypoint to check
-        # time.sleep(10)
         
 
         

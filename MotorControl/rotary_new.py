@@ -48,7 +48,6 @@ class RotaryEncoder:
             # #         self.count += 1
 
         self.state = (a_state, b_state)
-        print(self.count)
 
     def wheel_velocity(self, radius):
         """Returns wheel velocity"""
