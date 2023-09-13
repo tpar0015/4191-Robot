@@ -9,7 +9,7 @@ class Electromagnet:
     Class module to control the electromagnet
     Functions include: Toggling the electromagnet, increasing or decreasing the strength of the electromagnet
     """
-    def __init__(self, gpio_pin=19, frequency=1000, duty_cycle=50):
+    def __init__(self, gpio_pin=12, frequency=1000, duty_cycle=50):
         self.gpio_pin = gpio_pin #PINS["electromagnet"]
         self.frequency = frequency
         self.duty_cycle = duty_cycle
@@ -31,7 +31,7 @@ class Electromagnet:
         
         
 if __name__ == "__main__":
-    gpio_pin = 19
+    gpio_pin = 12
     frequency = 1000  
     duty_cycle = 50 
 
