@@ -35,9 +35,12 @@ class Electromagnet:
         GPIO.output(self.gpio_pin, GPIO.LOW)
         self.pwm.start()
 
-    def set_cycle(self,duty_cycle):
+    def set_cycle(self, duty_cycle):
         "Configure duty cycle of PWM"
         self.pwm.ChangeDutyCycle(duty_cycle)
+
+    def set_frequency(self, frequency):
+        self.pwm.ChangeFrequency(frequency)
 
     def clean_up(self):
         GPIO.output(self.gpio_pin, GPIO.LOW)
@@ -61,7 +64,9 @@ if __name__ == "__main__":
                 else:
                     electromagnet.turn_off()
                 #duty_cycle = float(input("Enter duty cycle (0 to 100): "))
+                #frequency = float(input("Enter frequency (Hz)): "))
                 #electromagnet.set_cycle(duty_cycle)
+                #electromagnet.set_frequency(frequency)
             except ValueError:
                 pass
     except KeyboardInterrupt:
