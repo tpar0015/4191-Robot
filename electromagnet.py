@@ -19,17 +19,21 @@ class Electromagnet:
 
         self.pwm = GPIO.PWM(gpio_pin, frequency)
     
-    def set_cycle(self,duty_cycle):
-        self.pwm.ChangeDutyCycle(duty_cycle)
-    
     def turn_on(self):
+        "Toggles on"
         GPIO.output(self.gpio_pin, GPIO.HIGH)
     
     def turn_off(self):
+        "Toggles off"
         GPIO.output(self.gpio_pin, GPIO.LOW)
 
     def pwm_on(self):
-        self.pwm.turn_on()
+        "Turn on PWM"
+        self.pwm.start()
+
+    def set_cycle(self,duty_cycle):
+        "Configure duty cycle of PWM"
+        self.pwm.ChangeDutyCycle(duty_cycle)
 
     def clean_up(self):
         self.pwm.stop()
