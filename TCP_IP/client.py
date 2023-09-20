@@ -3,7 +3,7 @@ import socket
 # Set up a socket using AF_INET interface, streaming protocol (TCP)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-host_address = '192.168.1.5' # Replace this with pther group's IP address
+host_address = '192.168.1.5' # Replace this with other group's IP address
 port = 12345 # Replace with a suitable port
 
 # Try to connect to server
