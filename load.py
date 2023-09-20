@@ -1,19 +1,24 @@
-from gpiozero import Button
+from electromagnet import Electromagnet
+from MotorControl.motorctl_new import Motor
 
-button_pin = 2 #? change later
 
+def load(magnet, motor):
+    # Advance magnet
+    motor.forward()
+    sleep(3)    #? need to check how long the motor needs to travel
+    motor.stop()
 
-button = Button(button_pin)
+    # Turn on
+    magnet.turn_on()
 
-# Robot should be in a safe state.
-# Needs to detect when package is loaded
-# Then go to 'find target'
+    # Reverse magnet
+    motor.backward()
+    sleep(3)
+    motor.stop
 
-def load():
+    
+if __name__ == '__main__':
+    magnet = Electromagnet()
+    motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
 
-    # wait for button to be pressed
-    button.wait_for_press()
-    sleep(2)
-
-    # return True when loaded
-    return True
+    load(magnet, motor)

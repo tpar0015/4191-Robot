@@ -1,16 +1,18 @@
+## Main running loop for the package delivery robot
+## Implements a state machine with two states: 'Load' and 'Fire'
+
+
+from electromagnet import Electromagnet
+from MotorControl.motorctl_new import Motor
+from pins import *
 from load import load
-from target import localise, aim
-from fire import launch, reset
 
-x_pos, y_pos, x_target, y_target = None, None, None, None
+mag = Electromagnet()
+launcher = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"], speed=100)
 
-# Run load process
-load()
 
-# Run aim process
-x_pos, y_pos, x_target, y_target = localise()
-aim()
+# Load cycle
+load(mag, launcher)
 
-# Run launch process
-launch()
-reset()
+
+# Fire cycle
