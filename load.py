@@ -1,11 +1,21 @@
 from electromagnet import Electromagnet
 from MotorControl.motorctl_new import Motor
+from time import sleep
+from pins import *
 
+draw_times = {
+    "A":    2,
+    "B":    3,
+    "C":    4
+}
 
 def load(magnet, motor):
-    # Advance magnet
+    # Draw back launcher
     motor.forward()
-    sleep(3)    #? need to check how long the motor needs to travel
+    
+    sleep(draw_times["A"])
+    
+    # Stop launcher
     motor.stop()
 
     # Turn on
@@ -13,7 +23,7 @@ def load(magnet, motor):
 
     # Reverse magnet
     motor.backward()
-    sleep(3)
+    sleep(draw_times["A"])
     motor.stop
 
     
@@ -22,3 +32,6 @@ if __name__ == '__main__':
     motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
 
     load(magnet, motor)
+
+    sleep(5)
+    motor.turn_off()
