@@ -3,7 +3,7 @@ from MotorControl.motorctl_new import Motor
 from time import sleep
 from pins import *
 
-draw_times = {
+draw_times = {      
     "A":    2,
     "B":    3,
     "C":    4

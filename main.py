@@ -16,8 +16,8 @@ launcher = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"], speed=10
 # initialise wheels
 wheel_left = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"], speed=100)
 wheel_right = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"], speed=100)
-encoder_left = RotaryEncoder(PINS[encoder1_a], PINS[encoder1_b])
-encoder_right = RotaryEncoder(PINS[encoder2_a], PINS[encoder2_b])
+encoder_left = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
+encoder_right = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"])
 
 
 ##! Load cycle
