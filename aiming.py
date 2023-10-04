@@ -45,4 +45,4 @@ if __name__ == '__main__':
     magnet = Electromagnet()
     motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
     robot_control = Drive([0,0,np.pi/2])
-    aiming(magnet, motor, robot_control, robot_pose, color_sticker)
+    aiming(magnet, motor, robot_control, robot_pose = 0, color_sticker = 1)
