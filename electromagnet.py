@@ -21,12 +21,12 @@ class Electromagnet:
     
     def turn_on(self):
         "Toggles on"
-        GPIO.output(self.gpio_pin, GPIO.HIGH)
+        GPIO.output(self.gpio_pin, GPIO.LOW)
         time.sleep(1)
     
     def turn_off(self):
         "Toggles off"
-        GPIO.output(self.gpio_pin, GPIO.LOW)
+        GPIO.output(self.gpio_pin, GPIO.HIGH)
         self.pwm.start(0)
         self.pwm.stop(0)
 
