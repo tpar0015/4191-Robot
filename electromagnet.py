@@ -26,13 +26,13 @@ class Electromagnet:
     
     def turn_off(self):
         "Toggles off"
-        GPIO.output(self.gpio_pin, GPIO.HIGH)
+        GPIO.output(self.gpio_pin, GPIO.HIGH)   # HIGH as circuit is active low
         self.pwm.start(0)
         self.pwm.stop(0)
 
     def pwm_on(self):
         "Turn on PWM"
-        GPIO.output(self.gpio_pin, GPIO.LOW)
+        GPIO.output(self.gpio_pin, GPIO.LOW)    # circuit is active low
         self.pwm.start()
 
     def set_cycle(self, duty_cycle):
