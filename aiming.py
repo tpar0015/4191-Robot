@@ -1,5 +1,8 @@
 from MotorControl.motorctl_new import Motor
 from MotorControl.drive_test_final import Drive
+from electromagnet import Electromagnet
+from pins import *
+from time import sleep
 
 ## Check if camera see the package
 ## find the turning angle
@@ -14,16 +17,32 @@ def camera_output(image):
     code from Brian
     
     """
-
+    
     #
     return color_sticker    # red(-1) for left target, blue(0) for center target and green(1) for right target
 
 
-def turning_angle(robot_pose, color_sticker):
+def turning_angle(robot_pose, color_sticker, set_angle=15):
     # robot_pose = -1(left), 0(center), 1(right)
     # color_sticker = -1(red), 0(blue), 1(green)
     # color_sticker - robot_pose = 0 (don't turn), < 0 (turn right), > 0 (turn left)
-    angle_difference = (robot_pose - color_sticker)*15  # need to change the angle difference between targets
+    curr_pose = robot_pose[2]
+    # Current pose 0
+    # -1 = -1, 0 = 0, 1 = 1
+    # Current pose -1
+    # -1 - -1 = 0 
+    # -1 - 0 = -1 
+    # -1 - 1 = -2 
+    # Current pose 1 
+    # 1 - 1 = 0 
+    # 1 - 0 = 1
+    # 1 - -1 = 2 
+    if curr_pose == 0:
+        angle_difference = (robot_pose - color_sticker)*15
+    else:
+        angle_difference = (robot_pose - color_sticker)*-15
+        
+    #angle_difference = (robot_pose - color_sticker)*15  # need to change the angle difference between targets
     return angle_difference
 
 
@@ -33,7 +52,7 @@ def aiming(magnet, motor, robot_control, robot_pose, color_sticker):
     # red(-1) for left target, blue(0) for center target and green(1) for right target
     angle_difference = turning_angle(robot_pose, color_sticker)
     robot_control.drive_deg(angle_difference,right_left = 1)
-
+    
     sleep(5)
     # Turn off
     magnet.turn_off()
