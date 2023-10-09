@@ -22,25 +22,15 @@ def camera_output(image):
     return color_sticker    # red(-1) for left target, blue(0) for center target and green(1) for right target
 
 
-def turning_angle(robot_pose, color_sticker, set_angle=15):
+def turning_position(robot_pose, color_sticker, set_angle=15):
     # robot_pose = -1(left), 0(center), 1(right)
     # color_sticker = -1(red), 0(blue), 1(green)
     # color_sticker - robot_pose = 0 (don't turn), < 0 (turn right), > 0 (turn left)
-    curr_pose = robot_pose[2]
-    # Current pose 0
-    # -1 = -1, 0 = 0, 1 = 1
-    # Current pose -1
-    # -1 - -1 = 0 
-    # -1 - 0 = -1 
-    # -1 - 1 = -2 
-    # Current pose 1 
-    # 1 - 1 = 0 
-    # 1 - 0 = 1
-    # 1 - -1 = 2 
+    curr_pose = robot_pose[2] 
     if curr_pose == 0:
-        angle_difference = (robot_pose - color_sticker)*15
+        angle_difference = (robot_pose - color_sticker)*set_angle
     else:
-        angle_difference = (robot_pose - color_sticker)*-15
+        angle_difference = (robot_pose - color_sticker)*-set_angle
         
     #angle_difference = (robot_pose - color_sticker)*15  # need to change the angle difference between targets
     return angle_difference
