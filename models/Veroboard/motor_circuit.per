@@ -24,6 +24,14 @@ File,19
     [{"Pin" : "9"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
     [{"Pin" : "10"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"]
     ]
+  },
+  { "Name" : "SIP4", "Locked" : false,
+    "Rows" : [
+    [{"Pin" : "1"}],
+    [{"Pin" : "2"}],
+    [{"Pin" : "3"}],
+    [{"Pin" : "4"}]
+    ]
   }
 ],
 "LeadedOutlines" : [
@@ -60,34 +68,44 @@ File,19
 ],
 "Components" : [
   { "Designator" : "M1", "Value" : "MOTOR1", "Outline" : "MotorCtl",
-  "X1000" : 9000, "Y1000" : 0, "EndDeltaX" : 0, "EndDeltaY" : 1,
+  "X1000" : 11000, "Y1000" : 0, "EndDeltaX" : 0, "EndDeltaY" : 1,
   "Text" : { "X" : 0, "Y" : 0, "Angle" : 0, "Visible" : true },
   "Group" : 0
   },
-  { "Designator" : "PWM", "Value" : "??", "Outline" : "BOX1_1",
-  "X1000" : 1000, "Y1000" : 5000, "EndDeltaX" : 0, "EndDeltaY" : 1,
-  "Text" : { "X" : 2, "Y" : 0, "Angle" : 90, "Visible" : true },
-  "Group" : 0
-  },
-  { "Designator" : "PWR", "Value" : "??", "Outline" : "BOX1_2",
-  "X1000" : 2000, "Y1000" : 0, "EndDeltaX" : 0, "EndDeltaY" : 1,
-  "Text" : { "X" : 1, "Y" : 0, "Angle" : 90, "Visible" : true },
+  { "Designator" : "SIP4", "Value" : "??", "Outline" : "SIP4",
+  "X1000" : 3000, "Y1000" : 1000, "EndDeltaX" : 0, "EndDeltaY" : 1,
+  "Text" : { "X" : 0, "Y" : 0, "Angle" : 90, "Visible" : true },
   "Group" : 0
   }
 ],
 "Links" : [
-  { "X" : 6, "Y" : 2, "EndDeltaX" : 0, "EndDeltaY" : 2, "Group" : 0 },
-  { "X" : 7, "Y" : 1, "EndDeltaX" : 0, "EndDeltaY" : 4, "Group" : 0 }
+  { "X" : 8, "Y" : 2, "EndDeltaX" : 0, "EndDeltaY" : 2, "Group" : 0 },
+  { "X" : 9, "Y" : 1, "EndDeltaX" : 0, "EndDeltaY" : 4, "Group" : 0 },
+  { "X" : 5, "Y" : 3, "EndDeltaX" : 0, "EndDeltaY" : 4, "Group" : 0 },
+  { "X" : 6, "Y" : 4, "EndDeltaX" : 0, "EndDeltaY" : 2, "Group" : 0 }
 ],
 "Breaks" : [
+  { "X" : 22, "Y" : 0, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 1, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 2, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 3, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 5, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 4, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 6, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 7, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 8, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 9, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 10, "Shift" : "none", "Group" : 0 },
+  { "X" : 7, "Y" : 3, "Shift" : "none", "Group" : 0 },
+  { "X" : 7, "Y" : 4, "Shift" : "none", "Group" : 0 }
 ],
 "Wires" : [
 ],
 "Text" : [
     { "Value" : "GND", "X" : 1, "Y" : 1, "Angle" : 0, "Size" : "Small", "Group" : 0 },
     { "Value" : "VCC", "X" : 1, "Y" : 2, "Angle" : 0, "Size" : "Small", "Group" : 0 },
-    { "Value" : "PWM1", "X" : 1, "Y" : 6, "Angle" : 0, "Size" : "Small", "Group" : 0 },
-    { "Value" : "PWM2", "X" : 1, "Y" : 7, "Angle" : 0, "Size" : "Small", "Group" : 0 }
+    { "Value" : "PWM1", "X" : 1, "Y" : 3, "Angle" : 0, "Size" : "Small", "Group" : 0 },
+    { "Value" : "PWM2", "X" : 1, "Y" : 4, "Angle" : 0, "Size" : "Small", "Group" : 0 }
 ],
 "Nets" : [
 ],
