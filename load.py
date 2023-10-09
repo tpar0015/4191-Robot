@@ -24,7 +24,7 @@ def load(magnet, motor):
     # Reverse magnet
     motor.backward()
     sleep(draw_times["A"])
-    motor.stop
+    motor.stop()
 
     
 if __name__ == '__main__':
@@ -34,4 +34,5 @@ if __name__ == '__main__':
     load(magnet, motor)
 
     sleep(5)
-    motor.turn_off()
+    motor.stop()
+
