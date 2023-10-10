@@ -7,7 +7,7 @@ from pins import *
 class Electromagnet:
     """
     Class module to control the electromagnet
-    Functions include: Toggling the electromagnet, increasing or decreasing the strength of the electromagnet
+    Functions include: Toggling the electromagnet
     """
     def __init__(self, gpio_pin=12, frequency=100, duty_cycle=50):
         self.gpio_pin = gpio_pin #PINS["electromagnet"]
