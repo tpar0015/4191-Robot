@@ -40,6 +40,7 @@ cv2.createTrackbar('vmax', 'ValComp',255,255,nothing)
 while(1):
     buzz = 0
     _, frame = cap.read()
+    cv2.imshow(frame)
 
     # HSV
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
@@ -78,7 +79,7 @@ while(1):
     if circles is not None:
         x, y, r = circles[0][0]
         x_p = int(round(x)) # distance
-        print x_p
+        print(x_p)
         for i in circles[0,:]:
                 # check if the ball is far and green circle
                 if int(round(i[2])) < 30:
