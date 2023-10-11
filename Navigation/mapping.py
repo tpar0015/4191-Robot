@@ -107,6 +107,8 @@ class Map:
             print("Cant find waypoint.")
         self.shorten_shortest_path()
 
+        self.shorten_shortest_path()
+
     def get_path_xy(self) -> list:
         """
         Returns path

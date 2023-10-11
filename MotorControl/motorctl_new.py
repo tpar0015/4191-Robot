@@ -56,9 +56,9 @@ class Motor():
 if __name__=="__main__":
     right_motor = Motor(PINS["motor1_en"], PINS["motor1_a"], PINS["motor1_b"])
     left_motor = Motor(PINS["motor2_en"], PINS["motor2_a"], PINS["motor2_b"])
-    left_motor.forward(50)
-    right_motor.forward(100)
-    time.sleep(2)
+    left_motor.set_speed(100)
+    #right_motor.set_speed(100)
+    time.sleep(12)
     left_motor.stop()
     right_motor.stop()
     GPIO.cleanup()

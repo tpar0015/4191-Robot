@@ -3,8 +3,8 @@ PINS = {
     "motor1_a": 24,
     "motor1_b": 23,
     "motor2_en":26,
-    "motor2_a": 16,    # Left Motor
-    "motor2_b": 12,
+    "motor2_a": 19,    # Left Motor
+    "motor2_b": 13,
 
     "encoder1_a": 17,    # Right Encoder
     "encoder1_b": 27,
