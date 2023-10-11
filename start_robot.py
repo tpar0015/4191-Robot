@@ -100,17 +100,17 @@ class Robot_Controller():
             self.map.update_location(pose)
 
             ultrasonic_readout = self.get_queue(self.ultrasonic_queue)
-            # if ultrasonic_readout is not None:            
-            #     remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
-            # else:
-            #     remapped_bool = False
-            # if remapped_bool:
-            #     print("Remapped")
-            #     path = self.map.get_path_xy()    # Updates path
-            #     node_idx = 1
-            #     # For testing
-            #     maps.append(self.map)
-            #     continue    # Skips rest of iteration
+            if ultrasonic_readout is not None:            
+                remapped_bool = self.map.check_obstacle(ultrasonic_readout, self.detect_distance)    # Checks obstacle, if obstacle remaps
+            else:
+                remapped_bool = False
+            if remapped_bool:
+                print("Remapped")
+                path = self.map.get_path_xy()    # Updates path
+                node_idx = 1
+                # For testing
+                maps.append(self.map)
+                continue    # Skips rest of iteration
 
             x,y = path[node_idx]
             theta_end = 0
@@ -118,7 +118,7 @@ class Robot_Controller():
             self.pose = self.Control.get_pose()
             print(f"Arrived at Node: {path[node_idx]}, Current Position: {pose}")
             node_idx += 1
-            time.sleep(5)
+            time.sleep(2)
         return maps     # Returns list of maps for testing
     def multiple_waypoints(self, waypoints):
         for waypoint in waypoints:
@@ -140,8 +140,9 @@ class Robot_Controller():
 if __name__ == "__main__":
     Robot = Robot_Controller()
     maps = [Robot.map]
+    waypoints  = 
     try:
-        Robot.drive_to_waypoint((300,100))
+        Robot.drive_to_waypoint((300,))
         pass
     except KeyboardInterrupt:
         Robot.terminate_processes()
