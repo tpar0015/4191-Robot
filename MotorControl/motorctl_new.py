@@ -8,17 +8,16 @@ from MotorControl.rotary_new import RotaryEncoder
 class Motor():
     """Module for controlling a single motor"""
     def __init__(self, enable_pin, pin_a, pin_b, speed=0):
-        self.enable_pin = enable_pin
         self.pin_a = pin_a
         self.pin_b = pin_b
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.enable_pin, GPIO.OUT)
+        # GPIO.setup(self.enable_pin, GPIO.OUT)
         GPIO.setup(self.pin_a, GPIO.OUT)
         GPIO.setup(self.pin_b, GPIO.OUT)
 
         self.speed = speed
-        self.pwm = GPIO.output(self.enable_pin, GPIO.HIGH)
+        # self.pwm = GPIO.output(self.enable_pin, GPIO.HIGH)
         self.pwm1 = GPIO.PWM(self.pin_a, 100)
         self.pwm2 = GPIO.PWM(self.pin_b, 100)
         self.pwm1.start(self.speed)
