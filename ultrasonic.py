@@ -25,15 +25,14 @@ class Ultrasonic:
     Module for ultrasonic sensor
     """
 
-    def __init__(self, queue: Queue):
-        self.trig_pin = PINS["sonar_trig"]
-        self.echo_pin = PINS["sonar_echo"]
+    def __init__(self, trig, echo):
+        self.trig_pin = trig
+        self.echo_pin = echo
         self.led = ledCRL()
         self.distance = float('inf')
         self.time_out = (
             200 * 2 / 100 / 340 * 1e6
         )  # Max Distance*2 / 100 / 340 * 1e6 (11764.7058824)
-        self.queue = queue
 
     def pulse(self, pin, toggle, time_out):
         """
@@ -72,26 +71,15 @@ class Ultrasonic:
         GPIO.setup(self.trig_pin, GPIO.OUT)
         GPIO.setup(self.echo_pin, GPIO.IN)
 
+    def single_iteration(self):
+        self.get_sonar()
+        distance = self.get_distance()
+        return distance
     def loop(self):
         while True:
-            self.get_sonar()
-            distance = self.get_distance()
-            self.queue.put(self.get_distance())
+            distance = self.single_iteration()
             print("Distance: %.2f mm" % (distance))
-            # if distance < 10:
-            #     self.led.light_on()
-            # else:
-            #     self.led.light_off()
-
             time.sleep(1)
 
-
 if __name__ == "__main__":
-    test_queue = Queue()
-    sensor = Ultrasonic(test_queue)
-    sensor.setup()
-
-    try:
-        sensor.loop()
-    except KeyboardInterrupt:
-        GPIO.cleanup()
+    pass

@@ -11,7 +11,7 @@ PINS = {
     "encoder2_a": 16,   # Left Encoder
     "encoder2_b": 12,
     
-    "sonar_trig": 18,
-    "sonar_echo": 15,
+    "sonar_trig0": 18,
+    "sonar_echo0": 15,
     "electromagnet": 1
 }
