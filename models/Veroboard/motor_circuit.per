@@ -1,0 +1,123 @@
+[Version]
+Product,2
+File,19
+{
+"Config" : {
+  "NetImportFormat" : "Protel"
+},
+"Board" : {
+  "Width" : 57,
+  "Height" : 32,
+  "Pattern" : "Strip"
+},
+"CelledOutlines" : [
+  { "Name" : "MotorCtl", "Locked" : true,
+    "Rows" : [
+    [{"Pin" : "1"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "2"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "3"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "4"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "5"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "6"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "7"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "8"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "9"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"],
+    [{"Pin" : "10"},"Body","Body","Body","Body","Body","Body","Body","Body","Body"]
+    ]
+  },
+  { "Name" : "SIP4", "Locked" : false,
+    "Rows" : [
+    [{"Pin" : "1"}],
+    [{"Pin" : "2"}],
+    [{"Pin" : "3"}],
+    [{"Pin" : "4"}]
+    ]
+  }
+],
+"LeadedOutlines" : [
+],
+"RadialOutlines" : [
+],
+"CustomOutlines" : [
+  { "Name" : "BOX1_1", "Locked" : false,
+    "Pins" : [
+    { "Name" : "1", "X5" : 12, "Y5" : 7 },
+    { "Name" : "2", "X5" : 12, "Y5" : 12 }
+    ],
+    "Lines" : [
+    { "X5" : 10, "Y5" : 4, "DX5" : 4, "DY5" : 0},
+    { "X5" : 14, "Y5" : 4, "DX5" : 0, "DY5" : 11},
+    { "X5" : 14, "Y5" : 15, "DX5" : -4, "DY5" : 0},
+    { "X5" : 10, "Y5" : 15, "DX5" : 0, "DY5" : -11}
+    ]
+  },
+  { "Name" : "BOX1_2", "Locked" : false,
+    "Pins" : [
+    { "Name" : "1", "X5" : 7, "Y5" : 7 },
+    { "Name" : "2", "X5" : 7, "Y5" : 12 }
+    ],
+    "Lines" : [
+    { "X5" : 2, "Y5" : 4, "DX5" : 10, "DY5" : 0},
+    { "X5" : 12, "Y5" : 4, "DX5" : 0, "DY5" : 11},
+    { "X5" : 12, "Y5" : 15, "DX5" : -10, "DY5" : 0},
+    { "X5" : 2, "Y5" : 15, "DX5" : 0, "DY5" : -11}
+    ]
+  }
+],
+"SmdOutlines" : [
+],
+"Components" : [
+  { "Designator" : "M1", "Value" : "MOTOR1", "Outline" : "MotorCtl",
+  "X1000" : 11000, "Y1000" : 0, "EndDeltaX" : 0, "EndDeltaY" : 1,
+  "Text" : { "X" : 0, "Y" : 0, "Angle" : 0, "Visible" : true },
+  "Group" : 0
+  },
+  { "Designator" : "SIP4", "Value" : "??", "Outline" : "SIP4",
+  "X1000" : 3000, "Y1000" : 1000, "EndDeltaX" : 0, "EndDeltaY" : 1,
+  "Text" : { "X" : 0, "Y" : 0, "Angle" : 90, "Visible" : true },
+  "Group" : 0
+  }
+],
+"Links" : [
+  { "X" : 8, "Y" : 2, "EndDeltaX" : 0, "EndDeltaY" : 2, "Group" : 0 },
+  { "X" : 9, "Y" : 1, "EndDeltaX" : 0, "EndDeltaY" : 4, "Group" : 0 },
+  { "X" : 5, "Y" : 3, "EndDeltaX" : 0, "EndDeltaY" : 4, "Group" : 0 },
+  { "X" : 6, "Y" : 4, "EndDeltaX" : 0, "EndDeltaY" : 2, "Group" : 0 }
+],
+"Breaks" : [
+  { "X" : 22, "Y" : 0, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 1, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 2, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 3, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 5, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 4, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 6, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 7, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 8, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 9, "Shift" : "none", "Group" : 0 },
+  { "X" : 22, "Y" : 10, "Shift" : "none", "Group" : 0 },
+  { "X" : 7, "Y" : 3, "Shift" : "none", "Group" : 0 },
+  { "X" : 7, "Y" : 4, "Shift" : "none", "Group" : 0 }
+],
+"Wires" : [
+],
+"Text" : [
+    { "Value" : "GND", "X" : 1, "Y" : 1, "Angle" : 0, "Size" : "Small", "Group" : 0 },
+    { "Value" : "VCC", "X" : 1, "Y" : 2, "Angle" : 0, "Size" : "Small", "Group" : 0 },
+    { "Value" : "PWM1", "X" : 1, "Y" : 3, "Angle" : 0, "Size" : "Small", "Group" : 0 },
+    { "Value" : "PWM2", "X" : 1, "Y" : 4, "Angle" : 0, "Size" : "Small", "Group" : 0 }
+],
+"Nets" : [
+],
+"NetColors" : [
+    { "Node" : "" },
+    { "Node" : "" },
+    { "Node" : "" },
+    { "Node" : "" },
+    { "Node" : "" },
+    { "Node" : "" }
+],
+"Notes" : {
+  "Lines" : ""
+}
+}

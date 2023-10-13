@@ -86,8 +86,8 @@ class Graph:
             for neighbour,_ in node.neighbours:
                 memo.append(node)
                 # If node.x is within x_radius, and node.y is within y_radius 
-                # if self.distance_x(neighbour.xy[0], pos[0]) < x_radius and self.distance_x(neighbour.xy[1], pos[1]) < y_radius and neighbour not in memo:
-                if self.distance(neighbour.xy, pos) < math.hypot(x_radius,y_radius) and neighbour not in memo:
+                if self.distance_x(neighbour.xy[0], pos[0]) < x_radius and self.distance_x(neighbour.xy[1], pos[1]) < y_radius and neighbour not in memo:
+                # if self.distance(neighbour.xy, pos) < math.hypot(x_radius,y_radius) and neighbour not in memo:
                     recursive_nodes(neighbour, object_size, pos, memo)
 
         memo = []

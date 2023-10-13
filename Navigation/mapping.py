@@ -105,6 +105,7 @@ class Map:
             _, self.path = self.G.get_shortest_distance(end_node)
         else:
             print("Cant find waypoint.")
+        self.shorten_shortest_path()
 
         self.shorten_shortest_path()
 
@@ -272,4 +273,5 @@ if __name__ == '__main__':
     map_test.remap(100,(350, 200))
     map_test.update_path(end_node_xy)
     map_test.shorten_shortest_path()
+    map_test.remap(300,(300, 100))
     map_test.draw_arena(draw_path=True)

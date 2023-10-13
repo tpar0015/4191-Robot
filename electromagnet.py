@@ -8,7 +8,7 @@ from MotorControl.motorctl_new import Motor
 class Electromagnet:
     """
     Class module to control the electromagnet
-    Functions include: Toggling the electromagnet, increasing or decreasing the strength of the electromagnet
+    Functions include: Toggling the electromagnet
     """
     def __init__(self, gpio_pin=12, frequency=100, duty_cycle=50):
         self.gpio_pin = gpio_pin #PINS["electromagnet"]
@@ -22,18 +22,18 @@ class Electromagnet:
     
     def turn_on(self):
         "Toggles on"
-        GPIO.output(self.gpio_pin, GPIO.HIGH)
+        GPIO.output(self.gpio_pin, GPIO.LOW)
         time.sleep(1)
     
     def turn_off(self):
         "Toggles off"
-        GPIO.output(self.gpio_pin, GPIO.LOW)
+        GPIO.output(self.gpio_pin, GPIO.HIGH)   # HIGH as circuit is active low
         self.pwm.start(0)
         self.pwm.stop(0)
 
     def pwm_on(self):
         "Turn on PWM"
-        GPIO.output(self.gpio_pin, GPIO.LOW)
+        GPIO.output(self.gpio_pin, GPIO.LOW)    # circuit is active low
         self.pwm.start()
 
     def set_cycle(self, duty_cycle):

@@ -120,7 +120,7 @@ class Robot_Controller():
             self.pose = self.Control.get_pose()
             print(f"Arrived at Node: {path[node_idx]}, Current Position: {pose}")
             node_idx += 1
-            time.sleep(5)
+            time.sleep(2)
         return maps     # Returns list of maps for testing
     def multiple_waypoints(self, waypoints):
         for waypoint in waypoints:
