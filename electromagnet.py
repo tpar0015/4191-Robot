@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from pins import *
+from MotorControl.motorctl_new import Motor
 
 class Electromagnet:
     """
@@ -49,26 +50,79 @@ class Electromagnet:
         
         
 if __name__ == "__main__":
-    gpio_pin = 12
-    frequency = 10000
-    duty_cycle = 50 
-
-    electromagnet = Electromagnet(gpio_pin, frequency, duty_cycle)
-
     try:
-        while True:
-            try:
-                toggle = input("on/off: ")
-                if toggle == "on":
-                    electromagnet.turn_on()
-                else:
-                    electromagnet.turn_off()
-                #duty_cycle = float(input("Enter duty cycle (0 to 100): "))
-                #frequency = float(input("Enter frequency (Hz)): "))
-                #electromagnet.set_cycle(duty_cycle)
-                #electromagnet.set_frequency(frequency)
-            except ValueError:
-                pass
-    except KeyboardInterrupt:
-        pass
-    electromagnet.clean_up()
+
+        gpio_pin = 26
+        frequency = 10000
+        duty_cycle = 50 
+
+        electromagnet = Electromagnet(gpio_pin, frequency, duty_cycle)
+        drawback_motor = Motor(6, 18, 23)
+        x = True
+        while x:
+            s = input('Forward done?  ')
+            if s == 'y':
+                x = False
+            else:
+                drawback_motor.set_speed(100)
+                drawback_motor.forward()
+                time.sleep(0.5)
+                drawback_motor.stop()
+        y = True
+        while y:
+            s = input("Drawback done? ")
+            if s == 'y':
+                y = False
+            else:
+                drawback_motor.set_speed(100)
+                drawback_motor.backward()
+                time.sleep(0.5)
+                drawback_motor.stop()
+        input('Release')
+        electromagnet.turn_on()
+        input('done')
+        electromagnet.clean_up()
+    except:
+        electromagnet.clean_up()
+        # try:
+    #     print("Going Forward")
+    #     while True:
+    #         toggle = input("Done? (y/n)")
+    #         if toggle == "y":
+    #             break
+    #         forward_time = float(input("Forward Time: "))
+    #         drawback_motor.set_speed(100)
+    #         drawback_motor.forward()
+    #         time.sleep(forward_time)
+    #         drawback_motor.stop()
+
+            
+    #     while True:
+    #         try:
+    #             toggle = input("on/off: ")
+    #             if toggle == "on":
+    #                 electromagnet.turn_on()
+    #                 while True:
+    #                     x = input("Drawback Time: ")
+    #                     x = float(x)
+    #                     print(x)
+    #                     drawback_motor.set_speed(100)
+    #                     drawback_motor.backward()
+    #                     time.sleep(x)
+    #                     drawback_motor.stop()
+    #                     toggle = input("Done? (y/n)")
+    #                     if toggle == "y":
+    #                         electromagnet.turn_off()
+    #                         break
+    #             else:
+    #                 electromagnet.turn_off()
+    #             #duty_cycle = float(input("Enter duty cycle (0 to 100): "))
+    #             #frequency = float(input("Enter frequency (Hz)): "))
+    #             #electromagnet.set_cycle(duty_cycle)
+    #             #electromagnet.set_frequency(frequency)
+    #         except ValueError:
+    #             GPIO.cleanup()
+    #             pass
+    # except KeyboardInterrupt:
+    #     pass
+    # electromagnet.clean_up()
