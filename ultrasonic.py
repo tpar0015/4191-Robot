@@ -30,11 +30,10 @@ class Ultrasonic:
         self.echo_pin = echo
         self.led = ledCRL()
         self.distance = float('inf')
-        self.time_out = (
-            200 * 2 / 100 / 340 * 1e6
-        )  # Max Distance*2 / 100 / 340 * 1e6 (11764.7058824)
+        self.time_out = (200 * 2 / 100 / 340 * 1e6)  # Max Distance*2 / 100 / 340 * 1e6 (11764.7058824)
+        self.setup()
 
-    def pulse(self, pin, toggle, time_out):
+    def pulse(self, pin, toggle):
         """
         Return the length of the pulse (uS) or 0 if no pulse is returned before
         the timeout.
@@ -58,7 +57,7 @@ class Ultrasonic:
         """
         GPIO.output(self.trig_pin, GPIO.HIGH)
         GPIO.output(self.trig_pin, GPIO.LOW)
-        ping_time = self.pulse(self.echo_pin, GPIO.HIGH, self.time_out)
+        ping_time = self.pulse(self.echo_pin, GPIO.HIGH)
         distance = ping_time * 340 / 2 / 1e3  # speed of sound 340m/s
         self.distance = distance
     
@@ -82,4 +81,5 @@ class Ultrasonic:
             time.sleep(1)
 
 if __name__ == "__main__":
-    pass
+    ultrasonic = Ultrasonic(17,27)
+    ultrasonic.loop()
