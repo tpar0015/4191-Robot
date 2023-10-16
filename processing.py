@@ -74,3 +74,12 @@ class MultiProcess:
         self.rotary_process.terminate()
         self.ultrasonic_process.join()
         self.rotary_process.join()
+
+
+if __name__=="__main__":
+    manager = Manager()
+    processor = MultiProcess(manager, [])
+    processor.start_processes()
+    while True:
+        print(processor.get_rotary())
+

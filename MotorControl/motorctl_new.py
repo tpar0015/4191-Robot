@@ -53,10 +53,9 @@ class Motor():
             self.backward()
 
 if __name__=="__main__":
-    drawback_motor = Motor(6, 21, 20)
+    drawback_motor = Motor(1, PINS["motor2_a"],PINS["motor2_b"])
     drawback_motor.set_speed(100)
-    #drawback_motor.forward()
-    drawback_motor.backward()
-    time.sleep(19)
+    drawback_motor.forward()
+    time.sleep(2)
     drawback_motor.stop()
     GPIO.cleanup()

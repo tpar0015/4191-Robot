@@ -52,12 +52,11 @@ class Electromagnet:
 if __name__ == "__main__":
     try:
 
-        gpio_pin = 26
+        gpio_pin = 5
         frequency = 10000
         duty_cycle = 50 
-
         electromagnet = Electromagnet(gpio_pin, frequency, duty_cycle)
-        drawback_motor = Motor(6, 18, 23)
+        drawback_motor = Motor(6, 7, 1)
         x = True
         while x:
             s = input('Forward done?  ')
@@ -79,7 +78,7 @@ if __name__ == "__main__":
                 time.sleep(0.5)
                 drawback_motor.stop()
         input('Release')
-        electromagnet.turn_on()
+        electromagnet.turn_off()
         input('done')
         electromagnet.clean_up()
     except:
