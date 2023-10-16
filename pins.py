@@ -16,5 +16,5 @@ PINS = {
     
     "sonar_trig0": 18,
     "sonar_echo0": 15,
-    "electromagnet": 1
+    "electromagnet": 5
 }

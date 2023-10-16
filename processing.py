@@ -8,7 +8,7 @@ from MotorControl.rotary_new import RotaryEncoder
 
 
 class MultiProcess:
-    def __init__(self, manager, ultrasonic_names):
+    def __init__(self, manager, ultrasonic_names=[]):
         self.manager = manager
         self.ultrasonic_names = ultrasonic_names
         self.ultrasonic_dict = self.manager.dict()
@@ -74,12 +74,3 @@ class MultiProcess:
         self.rotary_process.terminate()
         self.ultrasonic_process.join()
         self.rotary_process.join()
-
-
-if __name__=="__main__":
-    manager = Manager()
-    processor = MultiProcess(manager, [])
-    processor.start_processes()
-    while True:
-        print(processor.get_rotary())
-
