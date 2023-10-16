@@ -107,7 +107,6 @@ class Map:
             print("Cant find waypoint.")
         self.shorten_shortest_path()
 
-        self.shorten_shortest_path()
 
     def get_path_xy(self) -> list:
         """
@@ -263,14 +262,14 @@ class Map:
 
 
 if __name__ == '__main__':
-    map_test = Map((1000, 1000), 50, loc=(500,50,np.pi/2))
+    map_test = Map((3000, 3000), 50, loc=(500,50,np.pi/2))
     map_test.generate_map()
-    end_node_xy = (1000, 1000)
+    end_node_xy = (300, 2000)
     end_node = map_test.G.get_nearest_node(end_node_xy)
     map_test.update_path(end_node_xy)
     path = map_test.get_path_xy()
     map_test.draw_arena()
-    map_test.remap(100,(350, 200))
+    map_test.remap(100,(1500, 500))
     map_test.update_path(end_node_xy)
     map_test.shorten_shortest_path()
     map_test.remap(300,(300, 100))

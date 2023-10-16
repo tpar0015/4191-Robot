@@ -10,8 +10,8 @@ from electromagnet import Electromagnet
 
 class Control:
     def __init__(self):
- 
-        processes = MultiProcess(["front", "left", "right"])
+        self.manager = Manager()
+        processes = MultiProcess(self.manager, ["front", "left", "right"])
         drive_control = Drive([0,0,0])
 
     def start(self):
