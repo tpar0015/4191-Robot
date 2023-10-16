@@ -23,6 +23,8 @@ class MultiProcess:
         """Initializes the ultrasonic sensors and adds them to the dictionary"""
         for name in names:
             self.ultrasonic_dict[name] = 0
+
+    
     def ultrasonic_loop(self):
         """Runs the ultrasonic sensors and updates the ultrasonic dictionary"""
         for i in range(len(self.ultrasonic_names)):
