@@ -38,6 +38,13 @@ class Calibrate:
                 self.processes.reset_count()
         
 
+        left_count, right_count = self.processes.get_rotary() # Ticks per m
+        with open('calibration_params.txt','rw') as f:
+            s1 = f"Left ticks per m: {left_count}"
+            s2 = f"Right ticks per m: {right_count}"
+            f.write(s1 + '\n' + s2)
+
+
 
 
 if __name__=="__main__"
