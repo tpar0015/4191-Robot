@@ -14,25 +14,15 @@ class MultiProcess:
         self.ultrasonic_dict = self.manager.dict()
         self.ultrasonics = []
         self.initialize_ultrasonics(ultrasonic_names)
-        self.ultrasonic_queue = None
-        self.rotary_queue = None
 
-        
+        self.left_count = self.manager.Value("i", 0)
+        self.right_count = self.manager.Value("i", 0)
 
-    def initialize_queues(self):
-        self.ultrasonic_queue = self.manager.Queue()
-        self.rotary_queue = self.manager.Queue()
+
     def initialize_ultrasonics(self, names):
         """Initializes the ultrasonic sensors and adds them to the dictionary"""
         for name in names:
             self.ultrasonic_dict[name] = 0
-
-    def read_ultrasonic_queue(self):
-        """Reads the ultrasonic queue and updates the ultrasonic dictionary"""
-        readouts  = self.ultrasonic_queue.get()
-        for i in range(len(self.ultrasonic_names)):
-            self.ultrasonic_dict[self.ultrasonic_names[i]] = readouts[i]
-
     def ultrasonic_loop(self):
         """Runs the ultrasonic sensors and updates the ultrasonic dictionary"""
         for i in range(len(self.ultrasonic_names)):
@@ -55,13 +45,13 @@ class MultiProcess:
         left_encoder = RotaryEncoder(PINS["encoder1_a"], PINS["encoder1_b"])
         right_encoder = RotaryEncoder(PINS["encoder2_a"], PINS["encoder2_b"])
         while True:
-            self.rotary_queue.put((left_encoder.count, right_encoder.count))
-            time.sleep(0.1) 
-        
+            self.left_count.value = left_encoder.get_count()
+            self.right_count.value = right_encoder.get_count()
+
 
     def get_rotary(self):
         """Returns the rotary queue"""
-        return self.rotary_queue.get()
+        return self.left_count.value, self.right_count.value
 
     def start_processes(self, ultrasonic=True, rotary=True):
         """Initializes the processes"""
