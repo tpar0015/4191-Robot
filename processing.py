@@ -62,6 +62,10 @@ class MultiProcess:
             self.rotary_process.start()
         self.ultrasonic_process.start()
 
+    def reset_count(self):
+        self.left_count.value = 0
+        self.right_count.value = 0
+
     def terminate_processes(self):
         """Terminates the processes"""
         self.ultrasonic_process.terminate()

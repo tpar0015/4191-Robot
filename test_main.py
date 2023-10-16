@@ -21,7 +21,6 @@ class Control:
 if __name__ == "__main__":
     with Manager() as manager:
         processes = MultiProcess(manager, ["drawback"])
-        processes.initialize_queues()
         processes.start_processes()
         while True:
             distance = processes.get_ultrasonic("drawback")
