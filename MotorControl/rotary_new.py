@@ -35,17 +35,6 @@ class RotaryEncoder:
         if self.state is not None:
             if self.state != (a_state, b_state):
                 self.count += 1
-            # if (self.state[0], self.state[1]) == (0,1):
-            # #     if (a_state, b_state) == (1,1):
-            # #         self.count -= 1
-            # #     elif (a_state, b_state) == (0,0):
-            # #         self.count += 1
-            # # elif (self.state[0], self.state[1]) == (1,0):
-            # #     if (a_state, b_state) == (0,1):
-            # #         self.count -= 1
-            # #         print("subtracting")
-            # #     elif (a_state, b_state) == (1,0):
-            # #         self.count += 1
 
         self.state = (a_state, b_state)
 
