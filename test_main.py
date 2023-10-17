@@ -88,6 +88,7 @@ class Control:
         #? TODO: Turn to target angle
         # Given target angle in theta
         self.drive_control.turn(target_angle)
+        self.position["angle"] = target_angle
         ##############################
         # Stage 3: Drawback & Fire
 
@@ -109,6 +110,7 @@ class Control:
         #? TODO: Return robot to initial pose
         target_angle = np.pi/2
         self.drive_control.turn(target_angle)
+        self.position["angle"] = target_angle
 
         pass 
         # self.drive_control.drive_forward(-1)
