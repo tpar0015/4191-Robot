@@ -7,14 +7,14 @@ PINS = {
     "motor2_b": 12,
 
     "motor3_a": 7,  # Drawback Motor
-    "motor3_b": 1,
+    "motor3_b": 8,
 
     "encoder1_a": 26,    # Right Encoder
     "encoder1_b": 19,
     "encoder2_a": 21,   # Left Encoder
     "encoder2_b": 20,
     
-    "sonar_trig0": 18,
-    "sonar_echo0": 15,
+    "sonar_trig0": 24,
+    "sonar_echo0": 23, 
     "electromagnet": 5
 }
