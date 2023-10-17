@@ -27,16 +27,16 @@ class Control:
         self.package_holder_home = 250      # home position after firing
         self.ultrasonic_error = 20          # uncertainty in ultrasonic sensor distance reading
 
-    def get_bin_position(self, cam_result):
-        match cam_result:
-            case 1:  # Bin A
-                return {"x": 130, "y": 0}
-            case 2:  # Bin B
-                return {"x": 130, "y": 60}
-            case 3:  # Bin C
-                return {"x": 130, "y": 120}
-            case _:
-                return None
+    # def get_bin_position(self, cam_result):
+    #     match cam_result:
+    #         case 1:  # Bin A
+    #             return {"x": 130, "y": 0}
+    #         case 2:  # Bin B
+    #             return {"x": 130, "y": 60}
+    #         case 3:  # Bin C
+    #             return {"x": 130, "y": 120}
+    #         case _:
+    #             return None
         
     def testing(self):
         x = True
@@ -72,7 +72,7 @@ class Control:
     def start(self):
         # Stage 0: Home and drawback 70%
 
-        # Check where the magnet is
+        #  where the magnet is
         current_dist = self.processes.get_ultrasonic("drawback")
 
         # Draw forward to home position
