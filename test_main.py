@@ -15,7 +15,7 @@ class Control:
         self.position = {           
             "x": 0,             # Positive x is from loading zone to bins
             "y": 0,             # Positive y is left to right from loading zone side
-            "angle": 0          # Positive angle is anticlockwise from the right (radians in (-pi,pi])
+            "angle": 0.0          # Positive angle is anticlockwise from the right (radians in (-pi,pi])
         }
         self.processes = MultiProcess(self.manager, ["drawback"])
         self.drive_control = Drive([0,0,0])
@@ -38,6 +38,36 @@ class Control:
             case _:
                 return None
         
+    def testing(self):
+        x = True
+        while x:
+            s = input('Forward done?  ')
+            if s == 'y':
+                x = False
+            else:
+                self.drawback_motor.set_speed(100)
+                self.drawback_motor.forward()
+                time.sleep(0.5)
+                self.drawback_motor.stop()
+            current_dist = self.processes.get_ultrasonic("drawback")
+            print(current_dist)
+        y = True
+        while y:
+            s = input("Drawback done? ")
+            if s == 'y':
+                y = False
+            else:
+                self.drawback_motor.set_speed(100)
+                self.drawback_motor.backward()
+                time.sleep(0.5)
+                self.drawback_motor.stop()
+                
+            current_dist = self.processes.get_ultrasonic("drawback")
+            print(current_dist)
+        input('Release')
+        self.electromagnet.turn_off()
+        input('done')
+        self.electromagnet.clean_up()
 
     def start(self):
         # Stage 0: Home and drawback 70%
@@ -128,4 +158,5 @@ if __name__ == "__main__":
             # print("Distance: %.2f mm" % (distance))
             # time.sleep(0.2)
 
-            robot.start()
+            #robot.start()
+            robot.testing()
