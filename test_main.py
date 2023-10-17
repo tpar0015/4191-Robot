@@ -107,7 +107,9 @@ class Control:
         
         #? TODO: make this work
         target_angle = 0
-        self.drive_control.drive_forward(-1)
+
+        pass 
+        # self.drive_control.drive_forward(-1)
 
 
 if __name__ == "__main__":
