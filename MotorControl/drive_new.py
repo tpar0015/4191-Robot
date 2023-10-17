@@ -33,7 +33,7 @@ class Drive:
     def set_speed(self, speed):
         self.speed = speed
 
-    def turn(self, theta, pid):
+    def turn(self, theta):
         """Turns robot left by theta radians"""
         self.stops_by_speed()
         # Calculate number of ticks to turn
@@ -48,7 +48,7 @@ class Drive:
             right_speed = -self.speed
 
         # Do Turn
-        self.control(num_ticks, left_speed, right_speed, pid)
+        self.control(num_ticks, left_speed, right_speed)
         
         self.left_motor.stop()
         self.right_motor.stop()
@@ -63,7 +63,7 @@ class Drive:
             self.pose[2] -= sum_ticks * self.distance_per_tick / self.turn_radius
 
         
-    def drive_forward(self, distance, pid):
+    def drive_forward(self, distance):
         """Drives robot forward by distance"""
         assert distance > 0, "Distance must be positive"
         # Stop Motors
@@ -77,7 +77,7 @@ class Drive:
         print("Drive Ticks: ", num_ticks)
         time.sleep(2)
         # Run Motors
-        self.control(num_ticks, left_speed, right_speed, pid)
+        self.control(num_ticks, left_speed, right_speed)
         self.left_motor.stop()
         self.right_motor.stop()
         # Check Ticks
