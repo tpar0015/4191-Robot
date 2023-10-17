@@ -7,7 +7,7 @@ from pins import *
 from electromagnet import Electromagnet
 from camera_pyFile.QRdetect import readQR
 import numpy as np
-
+from aiming import aiming
 
 class Control:
     def __init__(self):
@@ -86,7 +86,8 @@ class Control:
         target_angle = np.arctan2(x_deviation, y_deviation)     # Note: order is this way because of direction convention
 
         #? TODO: Turn to target angle
-
+        # Given target angle in theta
+        self.drive_control.turn(target_angle)
         ##############################
         # Stage 3: Drawback & Fire
 
@@ -106,7 +107,8 @@ class Control:
         # Stage 4: Orient to home position 
         
         #? TODO: Return robot to initial pose
-        target_angle = 0
+        target_angle = np.pi/2
+        self.drive_control.turn(target_angle)
 
         pass 
         # self.drive_control.drive_forward(-1)
