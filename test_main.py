@@ -22,10 +22,10 @@ class Control:
         self.electromagnet = Electromagnet(gpio_pin=PINS["electromagnet"])
 
         self.drawback_motor = Motor(-1, PINS["motor3_a"], PINS["motor3_b"])
-        self.drawback_distance = 50         # drawback to fire
-        self.ready_distance = 60            # ready position ~70% of fire drawback
-        self.package_holder_home = 250      # home position after firing
-        self.ultrasonic_error = 20          # uncertainty in ultrasonic sensor distance reading
+        self.drawback_distance = 80         # drawback to fire
+        self.ready_distance = self.drawback_distance + 10 # ready position ~70% of fire drawback
+        self.package_holder_home = 168      # home position after firing
+        self.ultrasonic_error = 10          # uncertainty in ultrasonic sensor distance reading
 
     # def get_bin_position(self, cam_result):
     #     match cam_result:
@@ -148,6 +148,60 @@ class Control:
         pass 
         # self.drive_control.drive_forward(-1)
 
+    def start_noaim(self):
+        # Stage 0: Home and drawback 70%
+
+        #  where the magnet is
+        current_dist = self.processes.get_ultrasonic("drawback")
+
+        # Draw forward to home position
+        print("Drawing to home position")
+        if current_dist < self.package_holder_home - self.ultrasonic_error:
+            # Move to package holder
+            dist_ready = 0  # count the number of times that ultrasonic output matches the desired location
+            while dist_ready <= 5:
+                #self.drawback_motor.set_speed(100)
+                self.drawback_motor.forward()
+                current_dist = self.processes.get_ultrasonic("drawback")
+                if current_dist < self.package_holder_home - self.ultrasonic_error:
+                    dist_ready += 1
+            self.drawback_motor.stop()
+            self.electromagnet.turn_on()
+
+        # Drawback to ready position
+        print("Drawing to ready position")
+        if current_dist > self.ready_distance + self.ultrasonic_error:
+            # Move to ready position
+            while current_dist > self.ready_distance + self.ultrasonic_error:
+                #self.drawback_motor.set_speed(100)
+                self.drawback_motor.backward()
+                current_dist = self.processes.get_ultrasonic("drawback")
+            self.drawback_motor.stop()
+
+        ##############################
+
+        # Stage 1: Read QR code at camera
+        cam_result = None
+
+        while cam_result is None:
+            cam_result = readQR()
+
+        print("Read QR code with result", cam_result)
+
+        ##############################
+        # Stage 2: Orient towards bin
+        #bin_position = self.get_bin_position(cam_result)
+        if cam_result == 3:
+            print("shooting at bin C")
+            self.electromagnet.turn_off()
+        elif cam_result == 2:
+            print("shooting at bin B")
+            self.electromagnet.turn_off()
+        elif cam_result == 1:
+            print("shooting at bin A")
+            self.electromagnet.turn_off()
+
+        
 
 if __name__ == "__main__":
     with Manager() as manager:
@@ -162,4 +216,5 @@ if __name__ == "__main__":
             # time.sleep(0.2)
 
             #robot.start()
+            #robot.start_noaim()
             robot.testing()
