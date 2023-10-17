@@ -83,7 +83,7 @@ class Control:
         # Calculate required turn angle
         x_deviation = bin_position["x"] - self.position["x"]
         y_deviation = bin_position["y"] - self.position["y"]
-        target_angle = np.arctan2(y_deviation, x_deviation)
+        target_angle = np.arctan2(x_deviation, y_deviation)     # Note: order is this way because of direction convention
 
         #? TODO: Turn to target angle
 
