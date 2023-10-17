@@ -79,10 +79,13 @@ class Control:
         print("Drawing to home position")
         if current_dist < self.package_holder_home - self.ultrasonic_error:
             # Move to package holder
-            while current_dist < self.package_holder_home - self.ultrasonic_error:
+            dist_ready = 0  # count the number of times that ultrasonic output matches the desired location
+            while dist_ready <= 5:
                 #self.drawback_motor.set_speed(100)
                 self.drawback_motor.forward()
                 current_dist = self.processes.get_ultrasonic("drawback")
+                if current_dist < self.package_holder_home - self.ultrasonic_error:
+                    dist_ready += 1
             self.drawback_motor.stop()
             self.electromagnet.turn_on()
 
